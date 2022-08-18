@@ -737,7 +737,7 @@ The tasks you will accomplish in this step are:
 
     Leave this window open and running for the next few steps in this lab.
 
-5. Go back to your original terminal window.  First Connect to **CDB1** to reset the system password so that password expiry message will not be a blocker. Then connect to **CDB2** and create the **REMOTE CLONE**  **OE\_DEV** from the database link **oe@cdb1\_link**.
+5. Go back to your original terminal window.  First, Connect to **CDB1** to reset the system password so that password expiry message will not be a blocker. Then connect to **CDB2** and create the **REMOTE CLONE**  **OE\_DEV** from the database link **oe@cdb1\_link**.
 
     ```
     <copy>
