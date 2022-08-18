@@ -1,0 +1,5 @@
+# ignore ALL .DS_Store
+.DS_Store
+
+# ignore ALL files in ANY directory named .vscode
+/.vscode

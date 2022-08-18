@@ -21,12 +21,6 @@
       "filename": "./../../clone-plug-drop-novnc/clone-plug-drop-novnc.md"
     },
     {
-      "title": "Lab 3: Application Containers",
-      "description": "Using Application Containers with Multitenant",
-	  "publisheddate": "15/03/2022",
-      "filename": "./../../manage-app/manage-app.md"
-    },
-    {
       "title": "Need Help?",
       "description": "Solutions to Common Problems and Directions for Receiving Live Help.",
       "filename": "https://raw.githubusercontent.com/oracle/learning-library/master/common/labs/need-help/need-help-livelabs.md"
