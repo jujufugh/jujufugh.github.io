@@ -737,7 +737,19 @@ The tasks you will accomplish in this step are:
 
     Leave this window open and running for the next few steps in this lab.
 
-5. Go back to your original terminal window.  Connect to **CDB2** and create the **REMOTE CLONE**  **OE\_DEV** from the database link **oe@cdb1\_link**.
+5. Go back to your original terminal window.  First Connect to **CDB1** to reset the system password so that password expiry message will not be a blocker. Then connect to **CDB2** and create the **REMOTE CLONE**  **OE\_DEV** from the database link **oe@cdb1\_link**.
+
+    ```
+    <copy>
+    connect sys/oracle@localhost:1523/cdb1 as sysdba
+    </copy>
+    ```
+
+    ```
+    <copy>
+    alter user system identified by oracle;
+    </copy>
+    ```
 
     ```
     <copy>connect sys/oracle@localhost:1524/cdb2 as sysdba</copy>
@@ -970,13 +982,13 @@ The tasks you will accomplish in this step are:
 
     ```
     <copy>
-    conn sys/oracle@localhost:1523/cdb2 as sysdba;
+    conn sys/oracle@localhost:1524/cdb2 as sysdba;
     alter system set REMOTE_LISTENER = "(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1523))" scope=both;
     </copy>
     ```
 
     ```
-    <copy>create pluggable database oe from oe@cdb1_link relocate availability max;
+    <copy>create pluggable database oe from oe@cdb1_link relocate;
     alter pluggable database oe open;
     show pdbs</copy>
     ```
