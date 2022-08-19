@@ -968,7 +968,7 @@ The tasks you will accomplish in this step are:
     ```
     <copy>sqlplus /nolog </copy>
     ```
-1. Connect to the container **CDB2**.
+1. Connect to the container **CDB1**.
     ```
     <copy>conn sys/oracle@localhost:1523/cdb1 as sysdba;</copy>
     ```
