@@ -1,37 +1,25 @@
-## Welcome to GitHub Pages
+# Welcome
 
-You can use the [editor on GitHub](https://github.com/jujufugh/jujufugh.github.io/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+[![](https://oracle-livelabs.github.io/common/images/livelabs-banner-formarketplace.png)](https://developer.oracle.com/livelabs)
+---
+LiveLabs is the place to explore Oracle's products and services using workshops designed to enhance your experience building and deploying applications on the Cloud and On-Premises.   Our library of workshops cover everything from how to provision the world's first autonomous database to setting up a webserver on OCI, machine learning and much more.  Use your existing Oracle Cloud account, a Free Tier account, or a LiveLabs Sandbox Reservation to build, test, and deploy applications on Oracle's Cloud.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### How do I get started?
+Visit [LiveLabs](https://developer.oracle.com/livelabs) now to get started.  Workshops are added weekly, please visit frequently for new content.
 
-### Markdown
+[![](https://oracle-livelabs.github.io/common/images/livelabs-new-skin.png)](https://developer.oracle.com/livelabs)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
+## Contributing
+Pull requests are currently not being accepted. See [CONTRIBUTING](CONTRIBUTING.md) for details.
 
-- Bulleted
-- List
+## License
+Copyright (c) 2014, 2022 Oracle and/or its affiliates
+The Universal Permissive License (UPL), Version 1.0
+See [LICENSE](LICENSE.txt) for details.
 
-1. Numbered
-2. List
+## Need Help?
+Please first consult the "Need Help?" lab located at the bottom of your workshop to see if our FAQ can solve your problem.  If you have an issue that is specific to the contents of the workshop, please reach out to the author located in the "Acknowledgements" section at the bottom of each lab via email. Please include your workshop name and lab name. You can also include screenshots and attach files. If you have a more general issue or comment, please [reach out to the LiveLabs team](mailto:livelabs-help_us@oracle.com).   
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/jujufugh/jujufugh.github.io/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+For workshop reservations you will need to [create an Oracle account](https://profile.oracle.com/myprofile/account/create-account.jspx).
