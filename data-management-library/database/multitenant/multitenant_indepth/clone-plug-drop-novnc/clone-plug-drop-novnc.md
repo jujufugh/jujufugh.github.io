@@ -5,7 +5,7 @@ Oracle Multitenant enables an Oracle Database to function as a container databas
 
 [](youtube:kzTQGs75IjA)
 
-*Estimated Workshop Time*: 2 hour
+*Estimated Workshop Time*: 1 hour
 
 ### Objectives
 
