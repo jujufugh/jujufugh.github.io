@@ -238,6 +238,11 @@ The tasks you will accomplish in this step are:
 
    ![](./images/pdb3mytab.png " ")
 
+6. Exit SQLPlus session if necessary
+    ```
+    <copy>exit</copy>
+    ```
+
 ## Task 4: Unplug a PDB
 This section looks at how to unplug a PDB.
 
@@ -332,6 +337,11 @@ The tasks you will accomplish in this step are:
     ```
 
     ![](./images/xmlfile.png " ")
+
+6. Exit SQLPlus session if necessary
+    ```
+    <copy>exit</copy>
+    ```
 
 ## Task 5: Plug in a PDB
 This section looks at how to plug in a PDB.
@@ -462,6 +472,11 @@ The tasks you will accomplish in this step are:
 
     ![](./images/pdb3mytab2.png " ")
 
+6. Exit SQLPlus session if necessary
+    ```
+    <copy>exit</copy>
+    ```
+
 ## Task 6: Drop a PDB
 This section looks at how to drop a pluggable database.
 
@@ -498,7 +513,11 @@ The tasks you will accomplish in this step are:
     ```
 
     ![](./images/droppdb.png " ")
-
+    
+3. Exit SQLPlus session if necessary
+    ```
+    <copy>exit</copy>
+    ```
 
 ## Task 7: Clone an Unplugged PDB
 This section looks at how to create a gold copy of a PDB and clone it into another container.
@@ -812,7 +831,7 @@ The tasks you will accomplish in this step are:
 
      While DML operations are going on in source PDB, We could create a remote clone.
 
-## Task 9: Snanshot Clone
+## Task 9: Snapshot Clone
   You can create a snapshot copy PDB by executing a CREATE PLUGGABLE DATABASE ... FROM ... **SNAPSHOT COPY** statement.
 
   A snapshot copy reduces the time required to create the clone because it does not include a complete copy of the source data files. Furthermore, the snapshot copy PDB occupies a fraction of the space of the source PDB.
