@@ -972,13 +972,18 @@ The tasks you will accomplish in this step are:
 
 7. Leave the **OE** pluggable database open with the load running against it for the rest of this lab.
 
+8. Exit SQLPlus session if necessary
+    ```
+    <copy>exit</copy>
+    ```
+
 ## Task 11: PDB Relocation
 
 This section looks at how to relocate a pluggable database from one container database to another. One important note, If both container databases are on the same host, then we need to be using the same listener, then we only change LOCAL_LISTENER. If the the container databases are on two seperate servers, then we need to configure REMOTE_LISTENER.
 For this lab we will change REMOTE_LISTENER for **CDB1** and **CDB2** to point at the other container.
 
 The tasks you will accomplish in this step are:
-- Change REMOTE_LISTER parameter for **CDB1** and  **CDB1**
+- Change REMOTE_LISTER parameter for **CDB1** and  **CDB2**
 - Relocate the pluggable database **OE** from **CDB1** to **CDB2** with the load still running
 - Once **OE** is open the load should continue working.
 
