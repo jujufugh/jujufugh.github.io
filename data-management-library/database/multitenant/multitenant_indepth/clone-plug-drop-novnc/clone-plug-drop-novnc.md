@@ -979,7 +979,7 @@ The tasks you will accomplish in this step are:
 
 ## Task 11: PDB Relocation
 
-This section looks at how to relocate a pluggable database from one container database to another. One important note, If both container databases are on the same host, then we need to be using the same listener, then we only change LOCAL_LISTENER. If the the container databases are on two seperate servers, then we need to configure REMOTE_LISTENER.
+This section looks at how to relocate a pluggable database from one container database to another. One important note, If both container databases are on the same host, then we need to be using the same listener, then we only change LOCAL\_LISTENER. If the the container databases are on two seperate servers, then we need to configure REMOTE\_LISTENER.
 For this lab we will change REMOTE_LISTENER for **CDB1** and **CDB2** to point at the other container.
 
 The tasks you will accomplish in this step are:
