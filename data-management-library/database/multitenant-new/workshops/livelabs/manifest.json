@@ -28,7 +28,12 @@
       "filename": "./../../clone-plug-drop/clone-plug-drop.md"
     },
     {
-      "title": "Lab 4: Application Containers",
+      "title": "Lab 4: Multitenant New Features",
+      "description": "Snapshot Carousel, Flashback PDB and CDB Fleet Management",
+      "filename": "./../../multitenant-new-features/multitenant-new-features.md"
+    },
+    {
+      "title": "Lab 5: Application Containers",
       "description": "Using Application Containers with Multitenant",
       "filename": "./../../app-containers/app-containers.md"
     },
