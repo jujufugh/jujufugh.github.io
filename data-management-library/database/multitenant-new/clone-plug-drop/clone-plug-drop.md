@@ -188,7 +188,7 @@ The task you will do in this step is:
     If you're not already running SQLcl, then launch SQLcl and set the formatting to make the on-screen output easier to read.
 
     ```
-    <copy>sql /nolog
+    <copy>
     set sqlformat ANSICONSOLE
     </copy>
     ```
@@ -260,7 +260,7 @@ The task you will do in this step is:
     If you are not already running SQLcl, then launch SQLcl and set the formatting to make the on-screen output easier to read.
 
     ```
-    <copy>sql /nolog
+    <copy>
     set sqlformat ANSICONSOLE
     </copy>
     ```
@@ -347,7 +347,7 @@ The task you will do in this step is:
     If you are not already running SQLcl, then launch SQLcl and set the formatting to make the on-screen output easier to read.
 
     ```
-    <copy>sql /nolog
+    <copy>
     set sqlformat ANSICONSOLE
     </copy>
     ```
@@ -456,7 +456,7 @@ The task you will do in this step is:
     If you are not already running SQLcl, then launch SQLcl and set the formatting to make the on-screen output easier to read.
 
     ```
-    <copy>sql /nolog
+    <copy>
     set sqlformat ANSICONSOLE
     </copy>
     ```
@@ -498,7 +498,7 @@ The tasks you will do in this step are:
     If you are not already running SQLcl, then launch SQLcl and set the formatting to make the on-screen output easier to read.
 
     ```
-    <copy>sql /nolog
+    <copy>
     set sqlformat ANSICONSOLE
     </copy>
     ```
@@ -672,7 +672,7 @@ What you will do in this task:
     If you are not already running SQLcl, then launch SQLcl and set the formatting to make the on-screen output easier to read.
 
     ```
-    <copy>sql /nolog
+    <copy>
     set sqlformat ANSICONSOLE
     </copy>
     ```
@@ -818,7 +818,7 @@ The tasks you will do in this step are:
     If you are not already running SQLcl, then launch SQLcl and set the formatting to make the on-screen output easier to read.
 
     ```
-    <copy>sql /nolog
+    <copy>
     set sqlformat ANSICONSOLE
     </copy>
     ```
@@ -891,7 +891,7 @@ The tasks you will do in this step are:
 
     ![](./images/task8.5-rowcountoerefresh.png " ")
 
-7. Leave the **OE** pluggable database open with the load running against it for the rest of this lab.
+6. Leave the **OE** pluggable database open with the load running against it for the rest of this lab.
 
 ## Task 9: PDB snapshot COPY
 
@@ -1023,7 +1023,7 @@ The two main requirements for snapshot copy to work on our Linux filesystem are:
 
 ## Task 10: PDB relocation
 
-This section looks at how to relocate a pluggable database from one container database to another. One important note: either both container databases need to be using the same listener in order for sessions to keep connecting, or local and remote listeners need to be set up correctly. For this lab we will change **CDB2** to use the same listener as **CDB1**.
+This section looks at how to relocate a pluggable database from one container database to another. One important note: either both container databases need to be using the same listener in order for sessions to keep connecting, or local and remote listeners need to be set up correctly. If both container databases are on the same host, then we need to be using the same listener, then we only change LOCAL\_LISTENER. If the the container databases are on two seperate servers, then we need to configure REMOTE\_LISTENER. For this lab we will change **CDB2** to use the same listener as **CDB1**.
 
 The tasks you will do in this step are:
 - Change **CDB2** to use the same listener as **CDB1**
@@ -1047,7 +1047,7 @@ The tasks you will do in this step are:
 
     ![](./images/task10.1-changelistener.png " ")
 
-2. Connect to **CDB2** using the shared listener and relocate **OE** using the database link **oe@cdb1_link**.  
+3. Connect to **CDB2** using the shared listener and relocate **OE** using the database link **oe@cdb1_link**.  
 
     ```
     <copy>conn sys/Ora_DB4U@localhost:1521/cdb2 as sysdba;</copy>
@@ -1061,7 +1061,7 @@ The tasks you will do in this step are:
 
     ![](./images/task10.2-relocateoe.png " ")
 
-3. Connect to **CDB1** and see what pluggable databases exist there.
+4. Connect to **CDB1** and see what pluggable databases exist there.
 
     ```
     <copy>conn sys/Ora_DB4U@localhost:1521/cdb1 as sysdba</copy>
@@ -1073,11 +1073,11 @@ The tasks you will do in this step are:
 
     ![](./images/task10.3-checkcdb1.png " ")
 
-4.  Check the other terminal window where the load program is running. After a timeout, the load program will resume on its own. If you don't want to wait, enter CTRL-C to break out of the connection timeout and the load program should continue. Note that the output now shows it is connected to the database in container **CDB2**. In real-world scenarios, Oracle customers may be able to leverage **Application Continuity**. Oracle **Application Continuity** masks outages from end users and applications by recovering the in-flight work for impacted database sessions following outages. You can learn more about **Application Continuity** [at the Oracle Application Continuity web page](https://www.oracle.com/database/technologies/high-availability/app-continuity.html).  
+5.  Check the other terminal window where the load program is running. After a timeout, the load program will resume on its own. If you don't want to wait, enter CTRL-C to break out of the connection timeout and the load program should continue. Note that the output now shows it is connected to the database in container **CDB2**. In real-world scenarios, Oracle customers may be able to leverage **Application Continuity**. Oracle **Application Continuity** masks outages from end users and applications by recovering the in-flight work for impacted database sessions following outages. You can learn more about **Application Continuity** [at the Oracle Application Continuity web page](https://www.oracle.com/database/technologies/high-availability/app-continuity.html).  
 
     The load program isn't needed anymore, so CTRL-C out of that program and exit from the second terminal window.
 
-5. If you are going to continue to use this environment then you will need to change **CDB2** back to use **LISTENER_CDB2**.
+6. If you are going to continue to use this environment then you will need to change **CDB2** back to use **LISTENER_CDB2**.
 
     ```
     <copy>conn sys/Ora_DB4U@localhost:1521/cdb2 as sysdba</copy>

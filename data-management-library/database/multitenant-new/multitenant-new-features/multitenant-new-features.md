@@ -14,23 +14,36 @@ This feature is currently restricted to Enterprise Edition on Engineered Systems
 
 **NOTE:** *When doing Copy/Paste using the convenient* **Copy** *function used throughout the guide, you must hit the* **ENTER** *key after pasting. Otherwise the last line will remain in the buffer until you hit* **ENTER!**
 
-```
-<copy>
-export ORACLE_SID=CDB1
-export ORAENV_ASK=NO
-. oraenv
-export ORAENV_ASK=YES
+    ```
+    <copy>
+    exit
+    </copy>
+    ```
+    ```
+    <copy>
+    . ~/.set-env-db.sh CDB1
+    </copy>
+    ```
 
-sqlplus / as sysdba <<EOF
+    ```
+    <copy>
+    sql / as sysdba
+    set sqlformat ANSICONSOLE
+    @whoami
+    </copy>
+    ```
 
-alter system set "_exadata_feature_on"=true scope=spfile;
-shutdown immediate;
-startup;
+    ```
+    <copy>
+    alter system set "_exadata_feature_on"=true scope=spfile;
+    shutdown immediate;
+    startup;
 
-exit;
-EOF
-</copy>
-```
+    exit;
+    </copy>
+    ```
+
+    ![](./images/lab4-prerequisite.png " ")
 
 ## Task 1: Log in and create PDB Snapshot Carousel
 
@@ -68,46 +81,11 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     ```
     <copy>
     set sqlformat ANSICONSOLE
+    @whoami.sql
     </copy>
     ```
 
-    ![](./images/task1.2-connectcdb1.png " ")
-
-3. Create a script to check to see who you are connected as. At any point in the lab you can run this script to see who or where you are connected. We'll save this script for future use and call it "whoami.sql".
-
-    ```
-    <copy>
-    select
-      'DB Name: '  ||Sys_Context('Userenv', 'DB_Name')||
-      ' / CDB?: '     ||case
-        when Sys_Context('Userenv', 'CDB_Name') is not null then 'YES'
-          else  'NO'
-          end||
-      ' / Auth-ID: '   ||Sys_Context('Userenv', 'Authenticated_Identity')||
-      ' / Sessn-User: '||Sys_Context('Userenv', 'Session_User')||
-      ' / Container: ' ||Nvl(Sys_Context('Userenv', 'Con_Name'), 'n/a')
-      "Who am I?"
-      from Dual
-      .
-
-      save whoami.sql
-      /
-
-    </copy>
-    ```
-
-    Now, let's run the script.
-
-    ```
-    <copy>
-     @whoami.sql
-    </copy>
-    ```
-
-   ![](./images/task1.3-whoisconnected.png " ")
-
-
-4. Create a PDB Snapshot Carousel **PDB_SNAP2**.
+3. Create a PDB Snapshot Carousel **PDB_SNAP2**.
 
     ```
     <copy>show pdbs
@@ -116,7 +94,6 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
 
     ```
     <copy>
-    connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba
 
     create pluggable database PDB_SNAP2 admin user PDB_Admin identified by Ora_DB4U snapshot mode every 1 hours;
 
@@ -126,9 +103,9 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     </copy>
     ```
 
-    ![](./images/task1.4-createpdb2.png " ")
+    ![](./images/lab4-task1.4-createpdb_snap2.png " ")
 
-5. Create a script to check to display PDB snapshot carousel settings. The snapshot settings are displayed using the SNAPSHOT_MODE and SNAPSHOT_INTERVAL columns in the CDB_PDBS view. Notice the SNAPSHOT_INTERVAL values are displayed in minutes. We'll save this script for future use and call it "pdb_snapshot_mode.sql".
+4. Create a script to check to display PDB snapshot carousel settings. The snapshot settings are displayed using the _SNAPSHOT\_MODE_ and _SNAPSHOT\_INTERVAL_ columns in the _CDB\_PDBS_ view. Notice the _SNAPSHOT\_INTERVAL_ values are displayed in minutes. We'll save this script for future use and call it "pdb\_snapshot\_mode.sql".
 
     ```
     <copy>
@@ -156,49 +133,47 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
      @pdb_snapshot_mode.sql
     </copy>
     ```
+    ![](./images/lab4-task1.5-createsnapshotmode.png " ")
 
-
-6. Change the session to point to **PDB_SNAP2**.
+5. Change the session to point to **PDB_SNAP2**.
 
     ```
     <copy>alter session set container = PDB_SNAP2;</copy>
     ```
 
-    ![](./images/task1.5-altertopdb2.png " ")
-
-7. Alter the snapshot settings using the **ALTER PLUGGABLE DATABASE** command in **PDB_SNAP2**.
+6. Alter the snapshot settings using the **ALTER PLUGGABLE DATABASE** command in **PDB_SNAP2**.
 
     ```
     <copy>
     alter pluggable database snapshot mode every 1 minutes;
-
+    @pdb_snapshot_mode.sql
     </copy>
     ```
 
     ```
     <copy>
     alter pluggable database snapshot mode manual;
-
+    @pdb_snapshot_mode.sql
     </copy>
     ```
     ```
     <copy>
     alter pluggable database snapshot mode none;
-
+    @pdb_snapshot_mode.sql
     </copy>
     ````
 
     ```
     <copy>
     alter pluggable database snapshot mode every 30 minutes;
-
+    @pdb_snapshot_mode.sql
     </copy>
     ````
 
-   ![](./images/task1.6-grantpdbadminprivs.png " ")
+   ![](./images/lab4-task1.7-updatesnapshotmode.png " ")
 
 
-8. Create a script to report current MAX_PDB_SNAPSHOT parameter value using CDB_PROPERTIES view in **PDB_SNAP2**, save the script as max_pdb_snapshots.sql.
+7. Create a script to report current MAX_PDB_SNAPSHOT parameter value using CDB_PROPERTIES view in **PDB_SNAP2**, save the script as max_pdb_snapshots.sql.
 
     ```
     <copy>
@@ -225,23 +200,17 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     </copy>
     ```
 
-    Now, let's run the script.
-
-    ```
-    <copy>
-     @max_pdb_snapshots.sql
-    </copy>
-    ```
-
     ```
     <copy>
     alter pluggable database set max_pdb_snapshots=8;
+    @max_pdb_snapshots.sql
     </copy>
     ```
 
-   ![](./images/task1.8-createtable_pdbadmin.png " ")
+   ![](./images/lab4-task1.8-updatemaxsnapshots1.png " ")
+   ![](./images/lab4-task1.8-updatemaxsnapshots2.png " ")
 
-9. Take snapshot of the PDB manually 
+8. Take snapshot of the PDB manually 
 
     ```
     <copy>
@@ -253,22 +222,14 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     ```
     <copy>
     alter pluggable database snapshot;
-    </copy>
-    ```
-
-    ```
-    <copy>    
     alter pluggable database snapshot my_snapshot;
-    </copy>
-    ```
-
-    ```
-    <copy>    
     alter pluggable database snapshot my_snapshot_save;
     </copy>
     ```
 
-10. List available snapshots of PDB using **CDB_PDB_SNAPSHOTS** view. Save the script as pdb_snapshots.sql.
+    ![](./images/lab4-task1.9-createsnapshots.png " ")
+
+9.  List available snapshots of PDB using **CDB_PDB_SNAPSHOTS** view. Save the script as pdb_snapshots.sql.
 
     ```
     <copy>
@@ -293,21 +254,9 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     </copy>
     ```
 
-    Now, let's run the script.
+    ![](./images/lab4-task1.10-listsnapshots.png " ")
 
-    ```
-    <copy>
-     @pdb_snapshots.sql
-    </copy>
-    ```
-
-11. Drop the snapshot manually. It works for snapshots with user-defined or system generated names.
-
-    ```
-    <copy>
-    alter session set container = PDB_SNAP2;
-    </copy>
-    ```
+10. Drop the snapshot manually. It works for snapshots with user-defined or system generated names.
     
     ```
     <copy>
@@ -321,14 +270,16 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     </copy>
     ```
 
-12. Create PDB clone from PDB snapshot.
+    ![](./images/lab4-task1.11-dropsnapshots.png " ")
+
+11. Create PDB clone from PDB snapshot.
 
     ```
     <copy>
     connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba
     </copy>
     ```
-    
+
     ```
     <copy>
     create pluggable database pdb2_my_snapshot from pdb_snap2 using snapshot my_snapshot_save snapshot mode every 24 hours;
@@ -352,6 +303,8 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     exit
     </copy>
     ```
+
+    ![](./images/lab4-task1.12-createpdbclonesnapshot.png " ")
 
 ## Task 2: PDB Flashback
 In Oracle Database 12.1 flashback database operations were limited to the root container, and therefore affected all pluggable databases (PDBs) associated with the root container. Oracle Database now supports flashback of a pluggable database, making flashback database relevant in the multitenant architecture again.
