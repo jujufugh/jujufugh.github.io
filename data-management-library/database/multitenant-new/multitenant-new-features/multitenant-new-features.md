@@ -12,36 +12,37 @@ Estimated Time: 2 hour
 
 This feature is currently restricted to Enterprise Edition on Engineered Systems, like Exadata, and Enterprise Edition on Oracle Database Cloud Services, as described [here](https://docs.oracle.com/en/database/oracle/oracle-database/19/dblic/Licensing-Information.html#GUID-0F9EB85D-4610-4EDF-89C2-4916A0E7AC87). There is a workaround for testing by enabling the "_exadata_feature_on" initialisation parameter.
 
+**NOTE:** When doing Copy/Paste using the convenient **Copy** *function used throughout the guide, you must hit the* **ENTER** *key after pasting. Otherwise the last line will remain in the buffer until you hit **ENTER!**
 
-    ```
-    <copy>
-    exit
-    </copy>
-    ```
+```
+<copy>
+exit
+</copy>
+```
 
-    ```
-    <copy>
-    . ~/.set-env-db.sh CDB1
-    </copy>
-    ```
+```
+<copy>
+. ~/.set-env-db.sh CDB1
+</copy>
+```
 
-    ```
-    <copy>
-    sql / as sysdba
-    set sqlformat ANSICONSOLE
-    @whoami
-    </copy>
-    ```
+```
+<copy>
+sql / as sysdba
+set sqlformat ANSICONSOLE
+@whoami
+</copy>
+```
 
-    ```
-    <copy>
-    alter system set "_exadata_feature_on"=true scope=spfile;
-    shutdown immediate;
-    startup;
+```
+<copy>
+alter system set "_exadata_feature_on"=true scope=spfile;
+shutdown immediate;
+startup;
 
-    exit
-    </copy>
-    ```
+exit
+</copy>
+```
 
 ![](./images/lab4-prerequisite.png " ")
 
