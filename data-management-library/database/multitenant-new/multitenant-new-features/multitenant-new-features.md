@@ -171,7 +171,7 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     </copy>
     ````
 
-![](./images/lab4-task1.7-updatesnapshotmode.png " ")
+    ![](./images/lab4-task1.7-updatesnapshotmode.png " ")
 
 
 7. Create a script to report current MAX_PDB_SNAPSHOT parameter value using CDB_PROPERTIES view in **PDB_SNAP2**, save the script as max_pdb_snapshots.sql.
@@ -398,7 +398,7 @@ The task you will do in this step is:
     </copy>
     ```
 
-   ![](./images/lab4-task2.4-createT1table.png" ")
+   ![](./images/lab4-task2.4-createT1table.png " ")
 
 5. Create Guaranteed Restore Point in root container for **PDB2**.
 
@@ -563,10 +563,10 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     ```
 
    ![](./images/task3.3-droppdb3.png " ")
+**Note:**
+* We can see the "pdb4" and "pdb5" pluggable databases are visible from the "cdb1" root container. The output of the PROXY_PDB column gives us a clue what is really happening here. The "pdb4" and "pdb5" pluggable databases are actually a type of proxy PDB in this root container, but they don't have all the functionality of a conventional proxy PDB, as the subset of tablespaces (SYSTEM, SYSAUX, TEMP and UNDO) are not created locally.
 
-   **Note:**We can see the "pdb4" and "pdb5" pluggable databases are visible from the "cdb1" root container. The output of the PROXY_PDB column gives us a clue what is really happening here. The "pdb4" and "pdb5" pluggable databases are actually a type of proxy PDB in this root container, but they don't have all the functionality of a conventional proxy PDB, as the subset of tablespaces (SYSTEM, SYSAUX, TEMP and UNDO) are not created locally.
-
-    Once the fleet is configured, we can query container data objects (V$, GV$, CDB_, and some Automatic Workload Repository DBA_HIST* views) across the whole fleet.
+* Once the fleet is configured, we can query container data objects (V$, GV$, CDB_, and some Automatic Workload Repository DBA_HIST* views) across the whole fleet.
 
 4. Create a common user and a common object in each of containers (ROOT and PDB) for each instance. We will only be querying the contents of the PDBs, so we don't need to populate those in the root container. They are only present to prevent us getting errors.
     
@@ -594,7 +594,7 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     CONNECT BY level <= 2;
     </copy>
     ```
-4. Create a common user and a common object in **CDB2** (ROOT and PDB).
+5. Create a common user and a common object in **CDB2** (ROOT and PDB).
 
     ```
     <copy>
