@@ -306,17 +306,34 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
 
     ![](./images/lab4-task1.12-createpdbclonesnapshot.png " ")
 
+12. Cleanup PDB snapshot clones
+
+    ```
+    <copy>
+    alter pluggable database pdb2_my_snapshot close; 
+    alter pluggable database pdb_snap2 close;
+    </copy>
+    ```
+
+    ```
+    <copy>
+    drop pluggable database pdb2_my_snapshot including datafiles;
+    drop pluggable database pdb_snap2 including datafiles; 
+    </copy>
+    ```
+
 ## Task 2: PDB Flashback
 In Oracle Database 12.1 flashback database operations were limited to the root container, and therefore affected all pluggable databases (PDBs) associated with the root container. Oracle Database now supports flashback of a pluggable database, making flashback database relevant in the multitenant architecture again.
 
 The task you will do in this step is:
 - Create Restore Points in **PDB2** and Flashback database **PDB2** to restore point to rollback unwanted changes. 
 
-    If you're not already running SQLcl, then launch SQLcl and set the formatting to make the on-screen output easier to read.
+    Make the FRA area folder for flashback logs
 
     ```
-    <copy>sql /nolog
-    set sqlformat ANSICONSOLE
+    <copy>
+    mkdir -p /opt/oracle/oradata/FRA
+    sqlplus /nolog
     </copy>
     ```
 
@@ -324,9 +341,10 @@ The task you will do in this step is:
 
     ```
     <copy>
-    sql /nolog
     connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba
-    set sqlformat ANSICONSOLE
+    archive log list
+    alter system set db_recovery_file_dest='/opt/oracle/oradata/FRA' scope=spfile; 
+    alter system set db_recovery_file_dest_size=15G scope=both; 
     </copy>
     ```
 
@@ -345,34 +363,28 @@ The task you will do in this step is:
     select name, open_mode, flashback_on from v$database;
     </copy>
     ```
-2. Update database parameter **DB_FLASHBACK_RETENTION_TARGET** to retain amount of flashback logs for 7 days.
+    ![](./images/lab4-task2.1-enableflashback.png " ")
+
+2. Update database parameter **DB\_FLASHBACK\_RETENTION\_TARGET** to retain amount of flashback logs for 7 days.
 
     ```
     <copy>
+    alter pluggable database all open read write;
+    show pdbs 
     alter system set db_flashback_retention_target=10080 scope=both;
     </copy>
     ```
-
-   ![](./images/task2.2-alterpdbreadonly.png " ")
-
 
 3. Create Restore Points at PDB level in **PDB2**.
 
     ```
     <copy>
-    connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba
-
     alter session set container=PDB2;
-    </copy>
-    ```
-    
-    ```
-    <copy>
     create restore point PDB2_BEFORE_T1;
     </copy>
     ```
 
-   ![](./images/task2.3-clonepdb2topdb3.png " ")
+   ![](./images/lab4-task2.2-createrestorepoint.png " ")
 
 4. Create table t1 in **PDB2**.
 
@@ -385,7 +397,7 @@ The task you will do in this step is:
     </copy>
     ```
 
-   ![](./images/task2.4-pdb2readwrite.png " ")
+   ![](./images/lab4-task2.4-createT1table.png" ")
 
 5. Create Guaranteed Restore Point in root container for **PDB2**.
 
@@ -408,7 +420,7 @@ The task you will do in this step is:
     </copy>
     ```
 
-   ![](./images/task2.3-clonepdb2topdb3.png " ")
+   ![](./images/lab4-task2.5-createGRPforPDB2.png " ")
 
 6. Create table t2 in **PDB2**
 
@@ -433,111 +445,193 @@ The task you will do in this step is:
     </copy>
     ```   
 
-7. Flashback database **PDB2** to GRP **PDB2_BEFORE_T2** 
+    ![](./images/lab4-task2.6-createT2table.png " ")
+
+7. Flashback database **PDB2** to GRP **PDB2\_BEFORE\_T2** 
 
     ```
     <copy>
     connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba
+    show pdbs
     </copy>
     ```
 
     ```
     <copy>
     alter pluggable database PDB2 close;
-    flashback pluggable database PDB2 to restore point PDB2_BEFORE_T2;
+    flashback pluggable database PDB2 to restore point PDB2\_BEFORE\_T2;
     alter pluggable database PDB2 open resetlogs;
+    </copy>
+    ```
+    ![](./images/lab4-task2.7-flashbackpdb2.png " ")
+
+    ```
+    <copy>
+    alter session set container=PDB2;
+    select table_name from user_tables where table_name in ('T1','T2');
+    select * from T2;
+    </copy>
+    ``` 
+
+   ```
+    <copy>
+    exit
+    </copy>
+    ```     
+
+    ![](./images/lab4-task2.7-postflashchecktableT1.png " ")
+
+## Task 3: CDB Fleet Management
+Oracle 19c allows you to monitor multiple container databases centrally as a fleet. 
+
+- CDB Fleet Lead Setup
+
+1. Connect to the CDB root container on the **CDB1** that will be the fleet lead, and set the LEAD_CDB parameter to TRUE.
+
+    ```
+    <copy>
+    sqlplus /nolog
+    connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba
     </copy>
     ```
 
     ```
     <copy>
-    select table_name from user_tables where table_name in ('T1','T2');
-    select * from T2;
-    </copy>
-    ``` 
-## Task 3: CDB Fleet Management
-This section reviews how to unplug a PDB from its container database (CDB) and save the PDB metadata into an XML manifest file.
+    ALTER DATABASE SET lead_cdb = TRUE;
 
-The task you will do in this step is:
-- Unplug **PDB3** from **CDB1**
+    COLUMN property_name FORMAT A30
+    COLUMN property_value FORMAT A30
 
-    If you are not already running SQLcl, then launch SQLcl and set the formatting to make the on-screen output easier to read.
-
-    ```
-    <copy>sql /nolog
-    set sqlformat ANSICONSOLE
+    SELECT property_name, property_value 
+    FROM   database_properties 
+    WHERE  property_name = 'LEAD_CDB';
     </copy>
     ```
 
-1. Connect to the container **CDB1**.
+    ![](./images/lab4-task3.1-cdbfleetleadsetup.png " ")
+
+2. The fleet members will need database links back to the lead **CDB1**, so create a common user to be used for these database link connections. 
+
+    ```
+    <copy>connect sys/Ora_DB4U@localhost:1522/cdb2 as sysdba</copy>
+    ```
+
+    ```
+    <copy>
+    CREATE PUBLIC DATABASE LINK lead_cdb_link CONNECT TO c##cdb_fleet_link_user IDENTIFIED BY cdb_fleet_link_user USING 'cdb1';
+    ALTER DATABASE SET lead_cdb_uri = 'dblink:LEAD_CDB_LINK';
+    </copy>
+    ```
+
+    ```
+    <copy>
+    SELECT property_value
+    FROM   database_properties
+    WHERE  property_name = 'LEAD_CDB_URI';
+    </copy>
+    ```
+   ![](./images/lab4-task4.2-configleadcdb.png " ")
+
+    ```
+    <copy>
+    show pdbs
+    alter pluggable database all open; 
+    </copy>
+    ```
+
+   ![](./images/lab4-task4.2-listpdbscdb2.png " ")
+
+3. Test CDB Fleet management.
 
     ```
     <copy>connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba</copy>
     ```
 
-2. Unplug **PDB3** from **CDB1**.
-
-    ```
-    <copy>show pdbs</copy>
-    ```
-
-    ```
-    <copy>alter pluggable database PDB3 close immediate;</copy>
-    ```
-
     ```
     <copy>
-    alter pluggable database PDB3
-    unplug into
-    '/opt/oracle/oradata/CDB1/pdb3.xml';
-    show pdbs
-    </copy>
-    ```
+    COLUMN name FORMAT A30
+    COLUMN proxy_pdb FORMAT A10
 
-
-   ![](./images/task3.2-unplugpdb3.png " ")
-
-3. Remove **PDB3** from **CDB1** but keep the PDB datafiles for future use.
-
-    ```
-    <copy>drop pluggable database PDB3 keep datafiles;
-    show pdbs
+    SELECT con_id,
+        name,
+        open_mode,
+        proxy_pdb
+    FROM v$pdbs
+    ORDER BY name;
     </copy>
     ```
 
    ![](./images/task3.3-droppdb3.png " ")
 
-4. Show the datafiles in **CDB1** and note that files for PDB3 are no longer part of the container.
+   **Note:**We can see the "pdb4" and "pdb5" pluggable databases are visible from the "cdb1" root container. The output of the PROXY_PDB column gives us a clue what is really happening here. The "pdb4" and "pdb5" pluggable databases are actually a type of proxy PDB in this root container, but they don't have all the functionality of a conventional proxy PDB, as the subset of tablespaces (SYSTEM, SYSAUX, TEMP and UNDO) are not created locally.
+
+    Once the fleet is configured, we can query container data objects (V$, GV$, CDB_, and some Automatic Workload Repository DBA_HIST* views) across the whole fleet.
+
+4. Create a common user and a common object in each of containers (ROOT and PDB) for each instance. We will only be querying the contents of the PDBs, so we don't need to populate those in the root container. They are only present to prevent us getting errors.
+    
     ```
     <copy>
-    with Containers as (
-      select PDB_ID Con_ID, PDB_Name Con_Name from DBA_PDBs
-      union
-      select 1 Con_ID, 'CDB$ROOT' Con_Name from Dual)
-    select
-      Con_ID,
-      Con_Name "Con_Name",
-      Tablespace_Name "T'space_Name",
-      File_Name "File_Name"
-    from CDB_Data_Files inner join Containers using (Con_ID)
-    union
-    select
-      Con_ID,
-      Con_Name "Con_Name",
-      Tablespace_Name "T'space_Name",
-      File_Name "File_Name"
-    from CDB_Temp_Files inner join Containers using (Con_ID)
-    order by 1, 3
-    /
+    connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba
+    CREATE USER c##common_user IDENTIFIED BY Common1 QUOTA UNLIMITED ON users;
+    GRANT CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE SYNONYM TO c##common_user CONTAINER=ALL;
+    </copy>
+    ```
+
+    ```
+    <copy>
+    CONN c##common_user/Common1@cdb1
+    CREATE TABLE c##common_user.common_user_tab (id NUMBER);
+    </copy>
+    ```
+
+    ```
+    <copy>
+    CONN c##common_user/Common1@pdb1
+    CREATE TABLE c##common_user.common_user_tab AS
+    SELECT level AS ID
+    FROM   dual
+    CONNECT BY level <= 2;
+    </copy>
+    ```
+4. Create a common user and a common object in **CDB2** (ROOT and PDB).
+
+    ```
+    <copy>
+    connect sys/Ora_DB4U@localhost:1522/cdb2 as sysdba
+    CREATE USER c##common_user IDENTIFIED BY Common1 QUOTA UNLIMITED ON users;
+    GRANT CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE SYNONYM TO c##common_user CONTAINER=ALL;
+    </copy>
+    ```
+
+    ```
+    <copy>
+    CONN c##common_user/Common1@cdb2
+    CREATE TABLE c##common_user.common_user_tab (id NUMBER);
+    </copy>
+    ```
+    
+    ```
+    <copy>
+    CONN c##common_user/Common1@oe
+    CREATE TABLE c##common_user.common_user_tab AS
+    SELECT level AS ID
+    FROM   dual
+    CONNECT BY level <= 2;
     </copy>
     ```
 
     ![](./images/task3.4-cdb1dbfiles.png " ")
 
-5. Look at the XML file for the pluggable database **PDB3**.  Take some time to review the information that is contained in a PDB manifest.
+5. We can now connect to the common user in the CDB fleet lead and query the contents of the common object in each PDB.
 
     ```
-    <copy>host cat /opt/oracle/oradata/CDB1/pdb3.xml</copy>
+    <copy>
+    conn c##common_user/Common1@cdb1
+    SELECT a.con_id, COUNT(*)
+    FROM   CONTAINERS(common_user_tab) a
+    GROUP BY a.con_id
+    ORDER BY 1;
+    </copy>
     ```
 
     ![](./images/task3.5-catxmlfile.png " ")
