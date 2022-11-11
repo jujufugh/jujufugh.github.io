@@ -19,6 +19,7 @@ This feature is currently restricted to Enterprise Edition on Engineered Systems
     exit
     </copy>
     ```
+
     ```
     <copy>
     . ~/.set-env-db.sh CDB1
@@ -43,7 +44,7 @@ This feature is currently restricted to Enterprise Edition on Engineered Systems
     </copy>
     ```
 
-    ![](./images/lab4-prerequisite.png " ")
+![](./images/lab4-prerequisite.png " ")
 
 ## Task 1: Log in and create PDB Snapshot Carousel
 
@@ -170,7 +171,7 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     </copy>
     ````
 
-   ![](./images/lab4-task1.7-updatesnapshotmode.png " ")
+![](./images/lab4-task1.7-updatesnapshotmode.png " ")
 
 
 7. Create a script to report current MAX_PDB_SNAPSHOT parameter value using CDB_PROPERTIES view in **PDB_SNAP2**, save the script as max_pdb_snapshots.sql.
