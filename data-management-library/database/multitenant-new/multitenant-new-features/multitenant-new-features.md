@@ -564,10 +564,11 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     ```
 
    ![](./images/lab4-task3.3-listpdbscdb1.png " ")
-**Note:**
-* We can see the "pdb4" and "pdb5" pluggable databases are visible from the "cdb1" root container. The output of the PROXY_PDB column gives us a clue what is really happening here. The "pdb4" and "pdb5" pluggable databases are actually a type of proxy PDB in this root container, but they don't have all the functionality of a conventional proxy PDB, as the subset of tablespaces (SYSTEM, SYSAUX, TEMP and UNDO) are not created locally.
+    **Note:**
+    * We can see the "pdb4" and "pdb5" pluggable databases are visible from the "cdb1" root container. The output of the PROXY_PDB column gives us a clue what is really happening here. The "pdb4" and "pdb5" pluggable databases are actually a type of proxy PDB in this root container, but they don't have all the functionality of a conventional proxy PDB, as the subset of tablespaces (SYSTEM, SYSAUX, TEMP and UNDO) are not created locally.
 
-* Once the fleet is configured, we can query container data objects (V$, GV$, CDB\_, and some Automatic Workload Repository DBA\_HIST* views) across the whole fleet.
+    * Once the fleet is configured, we can query container data objects (V$, GV$, CDB\_, and some Automatic Workload Repository DBA\_HIST* views) across the whole fleet.  
+    
 
 4. Create a common user and a common object in each of containers (ROOT and PDB) for each instance. We will only be querying the contents of the PDBs, so we don't need to populate those in the root container. They are only present to prevent us getting errors.
     
