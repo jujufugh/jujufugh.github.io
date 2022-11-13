@@ -531,7 +531,7 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     WHERE  property_name = 'LEAD_CDB_URI';
     </copy>
     ```
-   ![](./images/lab4-task4.2-configleadcdb.png " ")
+   ![](./images/lab4-task3.2-configleadcdb.png" ")
 
     ```
     <copy>
@@ -540,7 +540,7 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     </copy>
     ```
 
-   ![](./images/lab4-task4.2-listpdbscdb2.png " ")
+   ![](./images/lab4-task3.2-listpdbscdb2.png " ")
 
 3. Test CDB Fleet management.
 
@@ -562,11 +562,11 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     </copy>
     ```
 
-   ![](./images/task3.3-droppdb3.png " ")
+   ![](./images/lab4-task3.3-listpdbscdb1.png " ")
 **Note:**
 * We can see the "pdb4" and "pdb5" pluggable databases are visible from the "cdb1" root container. The output of the PROXY_PDB column gives us a clue what is really happening here. The "pdb4" and "pdb5" pluggable databases are actually a type of proxy PDB in this root container, but they don't have all the functionality of a conventional proxy PDB, as the subset of tablespaces (SYSTEM, SYSAUX, TEMP and UNDO) are not created locally.
 
-* Once the fleet is configured, we can query container data objects (V$, GV$, CDB_, and some Automatic Workload Repository DBA_HIST* views) across the whole fleet.
+* Once the fleet is configured, we can query container data objects (V$, GV$, CDB\_, and some Automatic Workload Repository DBA\_HIST* views) across the whole fleet.
 
 4. Create a common user and a common object in each of containers (ROOT and PDB) for each instance. We will only be querying the contents of the PDBs, so we don't need to populate those in the root container. They are only present to prevent us getting errors.
     
@@ -594,6 +594,9 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     CONNECT BY level <= 2;
     </copy>
     ```
+
+    ![](./images/lab4-task3.4-createtablecdb1.png " ")
+
 5. Create a common user and a common object in **CDB2** (ROOT and PDB).
 
     ```
@@ -601,6 +604,7 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     connect sys/Ora_DB4U@localhost:1522/cdb2 as sysdba
     CREATE USER c##common_user IDENTIFIED BY Common1 QUOTA UNLIMITED ON users;
     GRANT CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE SYNONYM TO c##common_user CONTAINER=ALL;
+    alter user c##common_user quota unlimited on system;
     </copy>
     ```
 
@@ -613,17 +617,17 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     
     ```
     <copy>
-    CONN c##common_user/Common1@oe
+    CONN c##common_user/Common1@localhost:1522/oe
     CREATE TABLE c##common_user.common_user_tab AS
     SELECT level AS ID
     FROM   dual
-    CONNECT BY level <= 2;
+    CONNECT BY level <= 4;
     </copy>
     ```
 
-    ![](./images/task3.4-cdb1dbfiles.png " ")
+    ![](./images/lab4-task3.5-createtablecdb2.png " ")
 
-5. We can now connect to the common user in the CDB fleet lead and query the contents of the common object in each PDB.
+6. We can now connect to the common user in the CDB fleet lead and query the contents of the common object in each PDB.
 
     ```
     <copy>
@@ -635,9 +639,9 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     </copy>
     ```
 
-    ![](./images/task3.5-catxmlfile.png " ")
+    ![](./images/lab4-task3.6-listproxydata.png " ")
 
-## Task 11: Lab cleanup
+## Task 4: Lab cleanup
 
 1. Exit from the SQL command prompt and reset the container databases back to their original ports. If any errors about dropping databases appear, you can ignore them.
 
