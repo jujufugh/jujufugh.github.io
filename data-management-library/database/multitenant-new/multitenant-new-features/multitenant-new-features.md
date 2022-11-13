@@ -531,7 +531,8 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     WHERE  property_name = 'LEAD_CDB_URI';
     </copy>
     ```
-   ![](./images/lab4-task3.2-configleadcdb.png" ")
+
+    ![](./images/lab4-task3.2-configleadcdb.png " ")
 
     ```
     <copy>
