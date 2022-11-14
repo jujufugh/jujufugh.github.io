@@ -335,6 +335,7 @@ The task you will do in this step is:
     <copy>
     . ~/.set-env-db.sh CDB1
     mkdir -p /opt/oracle/oradata/FRA
+    sqlplus / as sysdba
     </copy>
     ```
 
@@ -342,7 +343,6 @@ The task you will do in this step is:
 
     ```
     <copy>
-    sqlplus / as sysdba
     archive log list
     alter system set db_recovery_file_dest='/opt/oracle/oradata/FRA' scope=spfile; 
     alter system set db_recovery_file_dest_size=15G scope=both; 
