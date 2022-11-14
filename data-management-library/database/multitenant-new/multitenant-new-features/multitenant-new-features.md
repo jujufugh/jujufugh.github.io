@@ -5,8 +5,6 @@ In this lab you will try out new features of Multitenant. You will create and co
 
 Estimated Time: 2 hour
 
-[](youtube:kzTQGs75IjA)
-
 
 ### Prerequisites
 
@@ -658,6 +656,12 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
 
     ```
     <copy>
+    connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba
+    alter database set lead_cdb=FALSE;
+    drop user c##common_user cascade;
+    connect sys/Ora_DB4U@localhost:1522/cdb2 as sysdba
+    alter database set lead_cdb_uri='';
+    drop user c##common_user cascade;
     exit
     </copy>
     ```
