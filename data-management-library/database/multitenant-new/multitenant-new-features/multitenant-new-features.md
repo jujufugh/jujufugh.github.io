@@ -299,12 +299,6 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     </copy>
     ```
 
-    ```
-    <copy>    
-    exit
-    </copy>
-    ```
-
     ![](./images/lab4-task1.12-createpdbclonesnapshot.png " ")
 
 12. Cleanup PDB snapshot clones
@@ -323,6 +317,12 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     </copy>
     ```
 
+    ```
+    <copy>    
+    exit
+    </copy>
+    ```
+
 ## Task 2: PDB Flashback
 In Oracle Database 12.1 flashback database operations were limited to the root container, and therefore affected all pluggable databases (PDBs) associated with the root container. Oracle Database now supports flashback of a pluggable database, making flashback database relevant in the multitenant architecture again.
 
@@ -333,8 +333,8 @@ The task you will do in this step is:
 
     ```
     <copy>
+    . ~/.set-env-db.sh CDB1
     mkdir -p /opt/oracle/oradata/FRA
-    sqlplus /nolog
     </copy>
     ```
 
@@ -342,7 +342,7 @@ The task you will do in this step is:
 
     ```
     <copy>
-    connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba
+    sqlplus / as sysdba
     archive log list
     alter system set db_recovery_file_dest='/opt/oracle/oradata/FRA' scope=spfile; 
     alter system set db_recovery_file_dest_size=15G scope=both; 
@@ -460,7 +460,7 @@ The task you will do in this step is:
     ```
     <copy>
     alter pluggable database PDB2 close;
-    flashback pluggable database PDB2 to restore point PDB2\_BEFORE\_T2;
+    flashback pluggable database PDB2 to restore point PDB2_BEFORE_T2;
     alter pluggable database PDB2 open resetlogs;
     </copy>
     ```
@@ -474,7 +474,7 @@ The task you will do in this step is:
     </copy>
     ``` 
 
-   ```
+    ```
     <copy>
     exit
     </copy>
