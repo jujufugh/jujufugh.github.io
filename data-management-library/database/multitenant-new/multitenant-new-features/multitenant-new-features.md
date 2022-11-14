@@ -514,6 +514,15 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
 2. The fleet members will need database links back to the lead **CDB1**, so create a common user to be used for these database link connections. 
 
     ```
+    <copy>
+    CREATE USER c##cdb_fleet_link_user IDENTIFIED BY cdb_fleet_link_user;
+    GRANT CREATE SESSION TO c##cdb_fleet_link_user;
+    </copy>
+    ```
+
+3. For each fleet member, connect to the CDB root container and create a database link to the fleet lead, then set the LEAD_CDB_URI parameter to reference the database link.
+
+    ```
     <copy>connect sys/Ora_DB4U@localhost:1522/cdb2 as sysdba</copy>
     ```
 
@@ -543,7 +552,7 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
 
    ![](./images/lab4-task3.2-listpdbscdb2.png " ")
 
-3. Test CDB Fleet management.
+4. Test CDB Fleet management.
 
     ```
     <copy>connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba</copy>
@@ -570,7 +579,7 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     * Once the fleet is configured, we can query container data objects (V$, GV$, CDB\_, and some Automatic Workload Repository DBA\_HIST* views) across the whole fleet.  
     
 
-4. Create a common user and a common object in each of containers (ROOT and PDB) for each instance. We will only be querying the contents of the PDBs, so we don't need to populate those in the root container. They are only present to prevent us getting errors.
+5. Create a common user and a common object in each of containers (ROOT and PDB) for each instance. We will only be querying the contents of the PDBs, so we don't need to populate those in the root container. They are only present to prevent us getting errors.
     
     ```
     <copy>
@@ -599,7 +608,7 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
 
     ![](./images/lab4-task3.4-createtablecdb1.png " ")
 
-5. Create a common user and a common object in **CDB2** (ROOT and PDB).
+6. Create a common user and a common object in **CDB2** (ROOT and PDB).
 
     ```
     <copy>
@@ -629,7 +638,7 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
 
     ![](./images/lab4-task3.5-createtablecdb2.png " ")
 
-6. We can now connect to the common user in the CDB fleet lead and query the contents of the common object in each PDB.
+7. We can now connect to the common user in the CDB fleet lead and query the contents of the common object in each PDB.
 
     ```
     <copy>

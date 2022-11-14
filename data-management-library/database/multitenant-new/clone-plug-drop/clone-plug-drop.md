@@ -1089,22 +1089,6 @@ The tasks you will do in this step are:
 
     ![](./images/task10.5-resetlistener.png " ")
 
-## Task 11: Lab cleanup
-
-1. Exit from the SQL command prompt and reset the container databases back to their original ports. If any errors about dropping databases appear, you can ignore them.
-
-    ```
-    <copy>
-    exit
-    </copy>
-    ```
-    ```
-    <copy>
-    ./resetCDB.sh
-    </copy>
-    ```
-
-    ![](./images/task11.1-labcleanup.png " ")
 
 Now you've had a chance to try out the Multitenant option. You were able to create, clone, plug and unplug a pluggable database. You were then able to accomplish some advanced tasks, such as hot cloning and PDB relocation, that you could leverage to more easily maintain a large multitenant environment.
 
