@@ -53,7 +53,7 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
 * EVERY n HOURS : A snapshot is automatically created every "n" hours. Where "n" is between 1 and 1999.
 * EVERY n MINUTES : A snapshot is automatically created every "n" minutes. Where "n" is between 1 and 2999.
 
-**NOTE:** If you are using Oracle Managed Files (OMF) you don't need to worry about file name conversion. If you aren't using OMF, all PDB creation statements will require file name conversion using the **FILE_NAME_CONVERT** or **CREATE_FILE_DEST** settings in the CREATE PLUGGABLE DATABASE statements.
+**NOTE:** If you are using Oracle Managed Files (OMF) you don't need to worry about file name conversion. If you aren't using OMF, all PDB creation statements will require file name conversion using the **FILE\_NAME\_CONVERT** or **CREATE\_FILE\_DEST** settings in the CREATE PLUGGABLE DATABASE statements.
 
 1. All scripts for this lab are stored in the `labs/multitenant` folder and are run as the oracle user. Let's navigate to the path now.
 
@@ -172,7 +172,7 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
     ![](./images/lab4-task1.7-updatesnapshotmode.png " ")
 
 
-7. Create a script to report current MAX_PDB_SNAPSHOT parameter value using CDB_PROPERTIES view in **PDB_SNAP2**, save the script as max_pdb_snapshots.sql.
+7. Create a script to report current MAX_PDB_SNAPSHOT parameter value using CDB\_PROPERTIES view in **PDB\_SNAP2**, save the script as max\_pdb\_snapshots.sql.
 
     ```
     <copy>
@@ -228,7 +228,7 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
 
     ![](./images/lab4-task1.9-createsnapshots.png " ")
 
-9.  List available snapshots of PDB using **CDB_PDB_SNAPSHOTS** view. Save the script as pdb_snapshots.sql.
+9.  List available snapshots of PDB using **CDB\_PDB\_SNAPSHOTS** view. Save the script as pdb_snapshots.sql.
 
     ```
     <copy>
@@ -333,7 +333,8 @@ The task you will do in this step is:
     <copy>
     . ~/.set-env-db.sh CDB1
     mkdir -p /opt/oracle/oradata/FRA
-    sqlplus / as sysdba
+    sql / as sysdba
+    set sqlformat ANSICONSOLE
     </copy>
     ```
 
@@ -342,6 +343,11 @@ The task you will do in this step is:
     ```
     <copy>
     archive log list
+    </copy>
+    ```
+
+    ```
+    <copy>
     alter system set db_recovery_file_dest='/opt/oracle/oradata/FRA' scope=spfile; 
     alter system set db_recovery_file_dest_size=15G scope=both; 
     </copy>
@@ -489,8 +495,8 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
 
     ```
     <copy>
-    sqlplus /nolog
-    connect sys/Ora_DB4U@localhost:1521/cdb1 as sysdba
+    sql sys/Ora_DB4U@localhost:1521/cdb1 as sysdba
+    set sqlformat ANSICONSOLE
     </copy>
     ```
 
