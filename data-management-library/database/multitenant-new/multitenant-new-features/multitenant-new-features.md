@@ -198,15 +198,16 @@ Support for PDB snapshots can be defined during PDB creation as part of the **CR
 
     </copy>
     ```
+   ![](./images/lab4-task1.8-updatemaxsnapshots1.png " ")
 
     ```
     <copy>
-    alter pluggable database set max_pdb_snapshots=8;
+    alter pluggable database set max_pdb_snapshots=7;
     @max_pdb_snapshots.sql
     </copy>
     ```
 
-   ![](./images/lab4-task1.8-updatemaxsnapshots1.png " ")
+
    ![](./images/lab4-task1.8-updatemaxsnapshots2.png " ")
 
 8. Take snapshot of the PDB manually 
