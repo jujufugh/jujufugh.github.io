@@ -525,7 +525,7 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
     </copy>
     ```
 
-3. For each fleet member, connect to the CDB root container and create a database link to the fleet lead, then set the LEAD_CDB_URI parameter to reference the database link.
+3. For each fleet member, connect to the CDB root container and create a database link to the fleet lead, then set the LEAD\_CDB\_URI parameter to reference the database link.
 
     ```
     <copy>connect sys/Ora_DB4U@localhost:1522/cdb2 as sysdba</copy>
@@ -579,7 +579,7 @@ Oracle 19c allows you to monitor multiple container databases centrally as a fle
 
    ![](./images/lab4-task3.3-listpdbscdb1.png " ")
     **Note:**
-    * We can see the "pdb4" and "pdb5" pluggable databases are visible from the "cdb1" root container. The output of the PROXY_PDB column gives us a clue what is really happening here. The "pdb4" and "pdb5" pluggable databases are actually a type of proxy PDB in this root container, but they don't have all the functionality of a conventional proxy PDB, as the subset of tablespaces (SYSTEM, SYSAUX, TEMP and UNDO) are not created locally.
+    * We can see the "OE", "COPYPDB1" and "COPYPDB2" pluggable databases are visible from the "cdb1" root container. The output of the PROXY_PDB column gives us a clue what is really happening here. The "OE", "COPYPDB1" and "COPYPDB2" pluggable databases are actually a type of proxy PDB in this root container, but they don't have all the functionality of a conventional proxy PDB, as the subset of tablespaces (SYSTEM, SYSAUX, TEMP and UNDO) are not created locally.
 
     * Once the fleet is configured, we can query container data objects (V$, GV$, CDB\_, and some Automatic Workload Repository DBA\_HIST* views) across the whole fleet.  
     
