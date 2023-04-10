@@ -42,7 +42,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
 
     ![substitute user oracle](./images/sudo-oracle.png " ")
 
-3.  Set the environment variables to point to the Oracle binaries.  When prompted for the SID (Oracle Database System Identifier), enter **ORCL**.
+3.  Set the environment variables to point to the Oracle binaries.  When prompted for the SID (Oracle Database System Identifier), enter **cdb1**.
     ````
     <copy>
     . oraenv
@@ -88,7 +88,8 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
 7.  Exit SQL Plus to the oracle user.
 
     ```
-    <copy>exit
+    <copy>
+    exit
     exit
     </copy>
     ```
@@ -98,17 +99,22 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
 7.  Create gzip backup of the sample data datafile (storage compression simulation)
     ````
     <copy>
-    du -hs /u01/oradata/cdb1/pdb1/test_data.dbf
-    cp /u01/oradata/cdb1/pdb1/test_data.dbf /u01/oradata/test_data.dbf
+    sudo du -hs /u01/oradata/cdb1/pdb1/test_data.dbf
+    sudo cp /u01/oradata/cdb1/pdb1/test_data.dbf /u01/oradata/test_data.dbf
     </copy>
     ````
+    ![return to opc](images/backup-test-data-file.png)
 
     ````
     <copy>
-    gzip /u01/oradata/test_data.dbf
-    du -hs /u01/oradata/test_data.dbf.gz
+    sudo gzip /u01/oradata/test_data.dbf
+    sudo du -hs /u01/oradata/test_data.dbf.gz
     </copy>
     ````
+    ![return to opc](images/storage-compression-simulation.png)
+
+**Note: As you can see, we just backed up the test_data.dbf datafile and compressed it from 311MB to 14M.** 
+
 Congratulations! Now you have the environment to run the labs.
 
 You may now **proceed to the next lab**.
@@ -125,6 +131,6 @@ The above copyright notice and this permission notice shall be included in all c
 
 ## **Acknowledgements**
 
-- **Author** - Troy Anthony, DB Product Management
-- **Contributors** - Anoosha Pilli, Kay Malcolm, Madhusudhan Rao
+- **Author** - Royce Fu
+- **Contributors** - Noah Galloso, Richard Evans
 * **Last Updated By/Date** - Valentin Tabacaru, Mar 2023

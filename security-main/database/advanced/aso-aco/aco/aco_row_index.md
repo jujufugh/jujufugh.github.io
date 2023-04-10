@@ -1,4 +1,4 @@
-# Enable Advanced Compression for Table and Indexes
+# Enable Advanced Compression along with TDE 
 
 ## Introduction
 
@@ -48,10 +48,37 @@ This lab assumes you have:
 * The IP address and instance name for your DB19c Compute instance
 * Successfully logged into your LiveLabs account 
 
+
 ## Task 1: Compression Advisor to estimate the segment compression ratio
-1. Run Compression Advisor for Advanced Row Compression
+1. Run a *whoami* to ensure the value *oracle* comes back.)
+
+    Note: If you are running in Windows using putty, ensure your Session Timeout is set to greater than 0.
+    ```
+    <copy>whoami</copy>
+    ```
+
+2. If you are not the oracle user, log back in:
+    ````
+    <copy>
+    sudo su - oracle
+    </copy>
+    ````
+
+    ![substitute user oracle](./images/sudo-oracle.png " ")
+
+3.  Set the environment variables to point to the Oracle binaries.  When prompted for the SID (Oracle Database System Identifier), enter **cdb1**.
+    ````
+    <copy>
+    . oraenv
+    </copy>
+    cdb1
+    ````
+    ![environment variables](./images/oraenv.png " ")
+
+4. Login using SQL*Plus as the **oracle** user and Run Compression Advisor for Advanced Row Compression
 ```
 <copy>
+sqlplus system/Oracle123@localhost:1521/pdb1
 SET SERVEROUTPUT ON
 DECLARE
   l_blkcnt_cmp   PLS_INTEGER;
