@@ -56,8 +56,7 @@ This lab assumes you have:
     ```
     <copy>whoami</copy>
     ```
-
-2. If you are not the oracle user, log back in:
+    If you are not the oracle user, log back in:
     ````
     <copy>
     sudo su - oracle
@@ -66,7 +65,7 @@ This lab assumes you have:
 
     ![substitute user oracle](./images/sudo-oracle.png " ")
 
-3.  Set the environment variables to point to the Oracle binaries.  When prompted for the SID (Oracle Database System Identifier), enter **cdb1**.
+    Set the environment variables to point to the Oracle binaries.  When prompted for the SID (Oracle Database System Identifier), enter **cdb1**.
     ````
     <copy>
     . oraenv
@@ -75,155 +74,173 @@ This lab assumes you have:
     ````
     ![environment variables](./images/oraenv.png " ")
 
-4. Login using SQL*Plus as the **oracle** user and Run Compression Advisor for Advanced Row Compression
-```
-<copy>
-sqlplus system/Oracle123@localhost:1521/pdb1
-SET SERVEROUTPUT ON
-DECLARE
-  l_blkcnt_cmp   PLS_INTEGER;
-  l_blkcnt_uncmp PLS_INTEGER;
-  l_row_cmp      PLS_INTEGER;
-  l_row_uncmp    PLS_INTEGER;
-  l_cmp_ratio    NUMBER;
-  l_comptype_str VARCHAR2(32767);
-BEGIN
-   DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
-   scratchtbsname => 'COMP_DATA_TS' ,
-   ownname	  => 'SH' ,
-   objname	  => 'SALES' ,
-   subobjname     =>  NULL ,
-   comptype       =>  DBMS_COMPRESSION.COMP_ADVANCED,
-   blkcnt_cmp     => l_blkcnt_cmp,
-   blkcnt_uncmp   => l_blkcnt_uncmp,
-   row_cmp	  => l_row_cmp,
-   row_uncmp      => l_row_uncmp,
-   cmp_ratio      => l_cmp_ratio,
-   comptype_str   => l_comptype_str,
-   subset_numrows => DBMS_COMPRESSION.comp_ratio_minrows,
-   objtype	  => DBMS_COMPRESSION.objtype_table
-  );
-DBMS_OUTPUT.put_line( 'Number of blocks used by the compressed sample of the object	:  ' || l_blkcnt_cmp);
-DBMS_OUTPUT.put_line( 'Number of blocks used by the uncompressed sample of the object	:  ' || l_blkcnt_uncmp);
-DBMS_OUTPUT.put_line( 'Number of rows in a block in compressed sample of the object	:  ' || l_row_cmp);
-DBMS_OUTPUT.put_line( 'Number of rows in a block in uncompressed sample of the object	:  ' || l_row_uncmp);
-DBMS_OUTPUT.put_line( 'Estimated Compression Ratio of Sample                       	:  ' || l_cmp_ratio);
-DBMS_OUTPUT.put_line( 'Compression Type							:  ' || l_comptype_str);
-END;
-/
--- partition tables
-SET SERVEROUTPUT ON
-DECLARE
-  l_blkcnt_cmp   PLS_INTEGER;
-  l_blkcnt_uncmp PLS_INTEGER;
-  l_row_cmp      PLS_INTEGER;
-  l_row_uncmp    PLS_INTEGER;
-  l_cmp_ratio    NUMBER;
-  l_comptype_str VARCHAR2(32767);
-BEGIN
-   DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
-   scratchtbsname => 'COMP_DATA_TS' ,
-   ownname	  => 'SH' ,
-   objname	  => 'SALES' ,
-   subobjname     =>  'SALES_Q4_2001' ,
-   comptype       =>  DBMS_COMPRESSION.COMP_ADVANCED,
-   blkcnt_cmp     => l_blkcnt_cmp,
-   blkcnt_uncmp   => l_blkcnt_uncmp,
-   row_cmp	  => l_row_cmp,
-   row_uncmp      => l_row_uncmp,
-   cmp_ratio      => l_cmp_ratio,
-   comptype_str   => l_comptype_str,
-   subset_numrows => DBMS_COMPRESSION.comp_ratio_minrows,
-   objtype	  => DBMS_COMPRESSION.objtype_table
-  );
-DBMS_OUTPUT.put_line( 'Number of blocks used by the compressed sample of the object	:  ' || l_blkcnt_cmp);
-DBMS_OUTPUT.put_line( 'Number of blocks used by the uncompressed sample of the object	:  ' || l_blkcnt_uncmp);
-DBMS_OUTPUT.put_line( 'Number of rows in a block in compressed sample of the object	:  ' || l_row_cmp);
-DBMS_OUTPUT.put_line( 'Number of rows in a block in uncompressed sample of the object	:  ' || l_row_uncmp);
-DBMS_OUTPUT.put_line( 'Estimated Compression Ratio of Sample                       	:  ' || l_cmp_ratio);
-DBMS_OUTPUT.put_line( 'Compression Type							:  ' || l_comptype_str);
-END;
-/
+2. Login using SQL*Plus as the **oracle** user and create compressed tablespaces for table and indexes
 
-</copy>
-```
+    ````
+    <copy>
+    sqlplus system/Oracle123@localhost:1521/pdb1
+    create tablespace comp_data_ts datafile '/u01/oradata/cdb1/pdb1/comp_data_ts.dbf' size 50M autoextend on default table compress for oltp; 
 
-2. Run compression Advisor for Advanced Index Compression
-```
-<copy>
-SET SERVEROUTPUT ON
-DECLARE
-  l_blkcnt_cmp    PLS_INTEGER;
-  l_blkcnt_uncmp  PLS_INTEGER;
-  l_row_cmp       PLS_INTEGER;
-  l_row_uncmp     PLS_INTEGER;
-  l_cmp_ratio     NUMBER;
-  l_comptype_str  VARCHAR2(32767);
-BEGIN
-  DBMS_COMPRESSION.get_compression_ratio (
-    scratchtbsname  => 'USERS',
-    ownname         => 'HR',
-    objname         => 'TAB1_CODE_IDX',
-    subobjname      => 'TAB1_PART_2022',
-    comptype        => DBMS_COMPRESSION.COMP_INDEX_ADVANCED_LOW,
-    blkcnt_cmp      => l_blkcnt_cmp,
-    blkcnt_uncmp    => l_blkcnt_uncmp,
-    row_cmp         => l_row_cmp,
-    row_uncmp       => l_row_uncmp,
-    cmp_ratio       => l_cmp_ratio,
-    comptype_str    => l_comptype_str,
-    subset_numrows  => DBMS_COMPRESSION.comp_ratio_minrows,
-    objtype         => DBMS_COMPRESSION.objtype_index
-  );
+    create tablespace comp_idx_ts datafile '/u01/oradata/cdb1/pdb1/comp_idx_ts.dbf' size 50M autoextend on default index compress advanced low;
+    </copy>
+    ````
+    ![ACO](./images/aco-001.png "ACO")
+   
+3. Run Compression Advisor for Advanced Row Compression
+    ````
+    <copy>
+    SET SERVEROUTPUT ON
+    DECLARE
+      l_blkcnt_cmp   PLS_INTEGER;
+      l_blkcnt_uncmp PLS_INTEGER;
+      l_row_cmp      PLS_INTEGER;
+      l_row_uncmp    PLS_INTEGER;
+      l_cmp_ratio    NUMBER;
+      l_comptype_str VARCHAR2(32767);
+    BEGIN
+      DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
+      scratchtbsname => 'COMP_DATA_TS' ,
+      ownname	  => 'SH' ,
+      objname	  => 'SALES' ,
+      subobjname     =>  NULL ,
+      comptype       =>  DBMS_COMPRESSION.COMP_ADVANCED,
+      blkcnt_cmp     => l_blkcnt_cmp,
+      blkcnt_uncmp   => l_blkcnt_uncmp,
+      row_cmp	  => l_row_cmp,
+      row_uncmp      => l_row_uncmp,
+      cmp_ratio      => l_cmp_ratio,
+      comptype_str   => l_comptype_str,
+      subset_numrows => DBMS_COMPRESSION.comp_ratio_minrows,
+      objtype	  => DBMS_COMPRESSION.objtype_table
+      );
+    DBMS_OUTPUT.put_line( 'Number of blocks used by the compressed sample of the object	:  ' || l_blkcnt_cmp);
+    DBMS_OUTPUT.put_line( 'Number of blocks used by the uncompressed sample of the object	:  ' || l_blkcnt_uncmp);
+    DBMS_OUTPUT.put_line( 'Number of rows in a block in compressed sample of the object	:  ' || l_row_cmp);
+    DBMS_OUTPUT.put_line( 'Number of rows in a block in uncompressed sample of the object	:  ' || l_row_uncmp);
+    DBMS_OUTPUT.put_line( 'Estimated Compression Ratio of Sample                       	:  ' || l_cmp_ratio);
+    DBMS_OUTPUT.put_line( 'Compression Type							:  ' || l_comptype_str);
+    END;
+    /
+    </copy>
+    ````
+    ![ACO](./images/aco-002.png "ACO")
 
-  DBMS_OUTPUT.put_line('Number of blocks used (compressed)       : ' ||  l_blkcnt_cmp);
-  DBMS_OUTPUT.put_line('Number of blocks used (uncompressed)     : ' ||  l_blkcnt_uncmp);
-  DBMS_OUTPUT.put_line('Number of rows in a block (compressed)   : ' ||  l_row_cmp);
-  DBMS_OUTPUT.put_line('Number of rows in a block (uncompressed) : ' ||  l_row_uncmp);
-  DBMS_OUTPUT.put_line('Compression ratio                        : ' ||  l_cmp_ratio);
-  DBMS_OUTPUT.put_line('Compression type                         : ' ||  l_comptype_str);
-END;
-/
-</copy>
-```
+    ````
+    <copy>
+    -- partition tables
+    SET SERVEROUTPUT ON
+    DECLARE
+      l_blkcnt_cmp   PLS_INTEGER;
+      l_blkcnt_uncmp PLS_INTEGER;
+      l_row_cmp      PLS_INTEGER;
+      l_row_uncmp    PLS_INTEGER;
+      l_cmp_ratio    NUMBER;
+      l_comptype_str VARCHAR2(32767);
+    BEGIN
+      DBMS_COMPRESSION.GET_COMPRESSION_RATIO (
+      scratchtbsname => 'COMP_DATA_TS' ,
+      ownname	  => 'SH' ,
+      objname	  => 'SALES' ,
+      subobjname     =>  'SALES_Q4_2001' ,
+      comptype       =>  DBMS_COMPRESSION.COMP_ADVANCED,
+      blkcnt_cmp     => l_blkcnt_cmp,
+      blkcnt_uncmp   => l_blkcnt_uncmp,
+      row_cmp	  => l_row_cmp,
+      row_uncmp      => l_row_uncmp,
+      cmp_ratio      => l_cmp_ratio,
+      comptype_str   => l_comptype_str,
+      subset_numrows => DBMS_COMPRESSION.comp_ratio_minrows,
+      objtype	  => DBMS_COMPRESSION.objtype_table
+      );
+    DBMS_OUTPUT.put_line( 'Number of blocks used by the compressed sample of the object	:  ' || l_blkcnt_cmp);
+    DBMS_OUTPUT.put_line( 'Number of blocks used by the uncompressed sample of the object	:  ' || l_blkcnt_uncmp);
+    DBMS_OUTPUT.put_line( 'Number of rows in a block in compressed sample of the object	:  ' || l_row_cmp);
+    DBMS_OUTPUT.put_line( 'Number of rows in a block in uncompressed sample of the object	:  ' || l_row_uncmp);
+    DBMS_OUTPUT.put_line( 'Estimated Compression Ratio of Sample                       	:  ' || l_cmp_ratio);
+    DBMS_OUTPUT.put_line( 'Compression Type							:  ' || l_comptype_str);
+    END;
+    /
+    </copy>
+    ````
 
-3. Run Compression Advisor for Advanced Lob Compression
-```
-<copy>
---COMPRESSION ON A CLOB in a table
-SET SERVEROUTPUT ON
-DECLARE
-  l_blkcnt_cmp    PLS_INTEGER;
-  l_blkcnt_uncmp  PLS_INTEGER;
-  l_lobcnt        PLS_INTEGER;
-  l_cmp_ratio     NUMBER;
-  l_comptype_str  VARCHAR2(32767);
-BEGIN
-  DBMS_COMPRESSION.get_compression_ratio (
-    scratchtbsname  => 'USERS',
-    tabowner        => 'HR',
-    tabname         => 'TAB1',
-    lobname         => 'CLOB_DESCRIPTION',
-    partname        => NULL,
-    comptype        => DBMS_COMPRESSION.comp_lob_medium,
-    blkcnt_cmp      => l_blkcnt_cmp,
-    blkcnt_uncmp    => l_blkcnt_uncmp,
-    lobcnt          => l_lobcnt,
-    cmp_ratio       => l_cmp_ratio,
-    comptype_str    => l_comptype_str,
-    subset_numrows  => DBMS_COMPRESSION.comp_ratio_lob_maxrows
-  );
+    ![ACO](./images/aco-003.png "ACO")
 
-  DBMS_OUTPUT.put_line('Number of blocks used (compressed)       : ' ||  l_blkcnt_cmp);
-  DBMS_OUTPUT.put_line('Number of blocks used (uncompressed)     : ' ||  l_blkcnt_uncmp);
-  DBMS_OUTPUT.put_line('Number of rows in a block (compressed)   : ' ||  l_lobcnt);
-  DBMS_OUTPUT.put_line('Number of lobs sampled                   : ' ||  l_lobcnt);
-  DBMS_OUTPUT.put_line( 'Estimated Compression Ratio of Sample   : ' || l_cmp_ratio);
-  DBMS_OUTPUT.put_line('Compression type                         : ' ||  l_comptype_str);
-END;
-/
-</copy>
-```
+4. Run compression Advisor for Advanced Index Compression
+    ````
+    <copy>
+    SET SERVEROUTPUT ON
+    DECLARE
+      l_blkcnt_cmp    PLS_INTEGER;
+      l_blkcnt_uncmp  PLS_INTEGER;
+      l_row_cmp       PLS_INTEGER;
+      l_row_uncmp     PLS_INTEGER;
+      l_cmp_ratio     NUMBER;
+      l_comptype_str  VARCHAR2(32767);
+    BEGIN
+      DBMS_COMPRESSION.get_compression_ratio (
+        scratchtbsname  => 'COMP_IDX_TS',
+        ownname         => 'SH',
+        objname         => 'SALES_CUST_BIX',
+        subobjname      => NULL,
+        comptype        => DBMS_COMPRESSION.COMP_INDEX_ADVANCED_LOW,
+        blkcnt_cmp      => l_blkcnt_cmp,
+        blkcnt_uncmp    => l_blkcnt_uncmp,
+        row_cmp         => l_row_cmp,
+        row_uncmp       => l_row_uncmp,
+        cmp_ratio       => l_cmp_ratio,
+        comptype_str    => l_comptype_str,
+        subset_numrows  => DBMS_COMPRESSION.comp_ratio_minrows,
+        objtype         => DBMS_COMPRESSION.objtype_index
+      );
+
+      DBMS_OUTPUT.put_line('Number of blocks used (compressed)       : ' ||  l_blkcnt_cmp);
+      DBMS_OUTPUT.put_line('Number of blocks used (uncompressed)     : ' ||  l_blkcnt_uncmp);
+      DBMS_OUTPUT.put_line('Number of rows in a block (compressed)   : ' ||  l_row_cmp);
+      DBMS_OUTPUT.put_line('Number of rows in a block (uncompressed) : ' ||  l_row_uncmp);
+      DBMS_OUTPUT.put_line('Compression ratio                        : ' ||  l_cmp_ratio);
+      DBMS_OUTPUT.put_line('Compression type                         : ' ||  l_comptype_str);
+    END;
+    /
+    </copy>
+    ````
+
+5. Run Compression Advisor for Advanced Lob Compression
+    ````
+    <copy>
+    --COMPRESSION ON A CLOB in a table
+    SET SERVEROUTPUT ON
+    DECLARE
+      l_blkcnt_cmp    PLS_INTEGER;
+      l_blkcnt_uncmp  PLS_INTEGER;
+      l_lobcnt        PLS_INTEGER;
+      l_cmp_ratio     NUMBER;
+      l_comptype_str  VARCHAR2(32767);
+    BEGIN
+      DBMS_COMPRESSION.get_compression_ratio (
+        scratchtbsname  => 'USERS',
+        tabowner        => 'HR',
+        tabname         => 'TAB1',
+        lobname         => 'CLOB_DESCRIPTION',
+        partname        => NULL,
+        comptype        => DBMS_COMPRESSION.comp_lob_medium,
+        blkcnt_cmp      => l_blkcnt_cmp,
+        blkcnt_uncmp    => l_blkcnt_uncmp,
+        lobcnt          => l_lobcnt,
+        cmp_ratio       => l_cmp_ratio,
+        comptype_str    => l_comptype_str,
+        subset_numrows  => DBMS_COMPRESSION.comp_ratio_lob_maxrows
+      );
+
+      DBMS_OUTPUT.put_line('Number of blocks used (compressed)       : ' ||  l_blkcnt_cmp);
+      DBMS_OUTPUT.put_line('Number of blocks used (uncompressed)     : ' ||  l_blkcnt_uncmp);
+      DBMS_OUTPUT.put_line('Number of rows in a block (compressed)   : ' ||  l_lobcnt);
+      DBMS_OUTPUT.put_line('Number of lobs sampled                   : ' ||  l_lobcnt);
+      DBMS_OUTPUT.put_line( 'Estimated Compression Ratio of Sample   : ' || l_cmp_ratio);
+      DBMS_OUTPUT.put_line('Compression type                         : ' ||  l_comptype_str);
+    END;
+    /
+    </copy>
+    ````
 
 
 ## Task 2: Create a new tablespace with encryption and compression enabled
