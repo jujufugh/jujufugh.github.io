@@ -34,7 +34,6 @@ This lab assumes you have:
 | 6 | Encyrpt All New Tablespaces | 5 minutes |
 | 7 | Rekey Master Key | 5 minutes |
 | 8 | View Keystore Details | 5 minutes |
-| 9 | Restore Before TDE | 5 minutes |
 
 ## Task 1: Allow DB Restore
 
@@ -170,12 +169,31 @@ This lab assumes you have:
 
 6. Now your Autologin is created!
 
-## Task 5: Encrypt Existing Tablespace
 
-1. Use the Linux command, strings, to view the data in the data file, `empdata_prod.dbf` that is associated with the `EMPDATA_PROD` tablespace
+## Task 5: Encrypt Existing Tablespace TEST_DATA
+
+1. Use the Linux command, strings, to view the data in the data file, `test_data.dbf` that is associated with the `TEST_DATA` tablespace
 
     ````
-    <copy>./tde_strings_data_empdataprod.sh</copy>
+    <copy>
+    sqlplus system/Oracle123@localhost:1521/pdb1
+    set lines 110
+    set pages 9999
+    col algorithm       format a10
+    col encrypted       format a10
+    col file_name       format a45
+    col pdb_name        format a20
+    col online_status   format a15
+    col tablespace_name format a30
+    select file_name, online_status from dba_data_files where tablespace_name = 'TEST_DATA';
+    HOST strings /u01/oradata/cdb1/pdb1/test_data.dbf | tail -20
+    </copy>
+    ````
+
+    ````
+    <copy>
+    HOST strings /u01/oradata/cdb1/pdb1/test_data.dbf | tail -20
+    </copy>
     ````
 
     ![TDE](./images/tde-015.png "TDE")
@@ -188,15 +206,35 @@ This lab assumes you have:
 2. Next, **encrypt explicitly** the data by encrypting the entire tablespace using the AES256 encryption algorithm
 
     ````
-    <copy>./tde_encrypt_tbs.sh</copy>
+    <copy>
+    select tablespace_name, encrypted from dba_tablespaces where tablespace_name = 'TEST_DATA';
+    ALTER TABLESPACE test_data ENCRYPTION ONLINE USING 'AES256' ENCRYPT FILE_NAME_CONVERT = ('test_data','test_data_enc');
+    </copy>
+    ````
+    ![TDE](./images/tde-016-1.png "TDE")
+
+    ````
+    <copy>
+    select tablespace_name, encrypted from dba_tablespaces where tablespace_name = 'TEST_DATA';
+    select file_name, online_status from dba_data_files where tablespace_name = 'TEST_DATA';
+
+    select a.name pdb_name, b.name tablespace_name, c.ENCRYPTIONALG algorithm
+    from v$pdbs a, v$tablespace b, v$encrypted_tablespaces c
+    where a.con_id = b.con_id
+    and b.con_id = c.con_id
+    and b.ts# = c.ts#;
+    exit
+    </copy>
     ````
 
-    ![TDE](./images/tde-016.png "TDE")
+    ![TDE](./images/tde-016-2.png "TDE")
 
 3. Now, try the side-channel attack again
 
     ````
-    <copy>./tde_strings_data_empdataprod.sh</copy>
+    <copy>
+    strings /u01/oradata/cdb1/pdb1/test_data_enc.dbf | tail -20
+    </copy>
     ````
 
     ![TDE](./images/tde-017.png "TDE")
@@ -228,7 +266,7 @@ This lab assumes you have:
     - If the behavior specified by the `ENCRYPT_NEW_TABLESPACES` setting conflicts with the behavior specified by the `TABLESPACE_ENCRYPTION` setting, then the `TABLESPACE_ENCRYPTION` behavior takes precedence
     - So, `ENCRYPT_NEW_TABLESPACES` is automatically set to `ALWAYS` when `TABLESPACE_ENCRYPTION` is set to `AUTO_ENABLE`
     
-3. Finally, create gzip backup of the encrypted sample test_data datafile
+3. Finally, create gzip backup of the encrypted sample test_data_enc datafile
 
     ````
     <copy>
@@ -241,7 +279,8 @@ This lab assumes you have:
 
     ![TDE](./images/tde-020.png "TDE")
 
-    **Note**: Despite the fact that the tablespace **TEST** was created without specifying encryption parameters, it's encrypted by default with the AES256 encryption algorithm
+    **Note**: As you can see from above result, the storage compression benefits are not longer exists when we encrypt our tablespace, the gzip size of the encrypted datafile is the same as the uncompressed datafile. This is because the storage compression is enabled after data encryption. Using Oracle Advanced Compression, we can compress the data before enable the encryption so that we can make sure that we have zero storage impact when securing our data. 
+    <br>
 
 4. Now, all your new Tablespaces will be encrypted by default!
 
@@ -305,8 +344,9 @@ This lab assumes you have:
 
     ````
     <copy>./tde_view_wallet_in_db.sh</copy>
-    ````
 
+    ````
+<!-- Move the following part to the end of ACO compression lab 
 ## Task 9: Restore Before TDE
 
 1. First, execute this script to restore the pfile
@@ -359,6 +399,8 @@ This lab assumes you have:
     ````
 
     ![TDE](./images/tde-030.png "TDE")
+
+-->
 
 You may now proceed to the next lab!
 

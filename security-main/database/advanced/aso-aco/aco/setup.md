@@ -70,7 +70,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     ````
     <copy>
     sqlplus system/Oracle123@localhost:1521/pdb1
-    create tablespace TEST_DATA datafile '/u01/oradata/cdb1/pdb1/test_data.dbf' size 310m;
+    create tablespace TEST_DATA datafile '/u01/oradata/cdb1/pdb1/test_data.dbf' size 300m autoextend on;
     </copy>
     ````
     ![start sqlplus](./images/start-sqlplus.png " ")
@@ -79,7 +79,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
 
     ````
     <copy>
-    @mksample Oracle123 Oracle123 Oracle123 Oracle123 Oracle123 Oracle123 Oracle123 Oracle123 test_data temp /home/oracle/DBSecLab/db-sample-schemas-19c/ localhost:1521/pdb1
+    @/home/oracle/DBSecLab/db-sample-schemas-19c/sales_history/sh_main Oracle123 test_data temp Oracle123 /home/oracle/DBSecLab/db-sample-schemas-19c/sales_history/ /home/oracle/ v3 localhost:1521/pdb1
     </copy>
     ````
 
@@ -90,7 +90,6 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     ```
     <copy>
     exit
-    exit
     </copy>
     ```
 
@@ -99,16 +98,16 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
 7.  Create gzip backup of the sample data datafile (storage compression simulation)
     ````
     <copy>
-    sudo du -hs /u01/oradata/cdb1/pdb1/test_data.dbf
-    sudo cp /u01/oradata/cdb1/pdb1/test_data.dbf /u01/oradata/test_data.dbf
+    du -hs /u01/oradata/cdb1/pdb1/test_data.dbf
+    cp /u01/oradata/cdb1/pdb1/test_data.dbf /u01/oradata/test_data.dbf
     </copy>
     ````
     ![return to opc](images/backup-test-data-file.png)
 
     ````
     <copy>
-    sudo gzip /u01/oradata/test_data.dbf
-    sudo du -hs /u01/oradata/test_data.dbf.gz
+    gzip /u01/oradata/test_data.dbf
+    du -hs /u01/oradata/test_data.dbf.gz
     </copy>
     ````
     ![return to opc](images/storage-compression-simulation.png)
