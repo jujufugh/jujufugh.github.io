@@ -186,7 +186,6 @@ This lab assumes you have:
     col online_status   format a15
     col tablespace_name format a30
     select file_name, online_status from dba_data_files where tablespace_name = 'TEST_DATA';
-    HOST strings /u01/oradata/cdb1/pdb1/test_data.dbf | tail -20
     </copy>
     ````
 
@@ -196,7 +195,7 @@ This lab assumes you have:
     </copy>
     ````
 
-    ![TDE](./images/tde-015.png "TDE")
+    ![TDE](./images/tde-015-1.png "TDE")
 
     **Note:**
     - You can see the data and you are not connected to the database!
@@ -294,7 +293,7 @@ This lab assumes you have:
 
     - Have a look on the CDB key before rekeying...
 
-  ![TDE](./images/tde-021.png "TDE")
+    ![TDE](./images/tde-021.png "TDE")
 
     - ...and after
 
@@ -346,61 +345,7 @@ This lab assumes you have:
     <copy>./tde_view_wallet_in_db.sh</copy>
 
     ````
-<!-- Move the following part to the end of ACO compression lab 
-## Task 9: Restore Before TDE
 
-1. First, execute this script to restore the pfile
-
-    ````
-    <copy>./tde_restore_init_parameters.sh</copy>
-    ````
-
-    ![TDE](./images/tde-025.png "TDE")
-
-
-2. Second, restore the database (this may take some time)
-
-    ````
-    <copy>./tde_restore_db.sh</copy>
-    ````
-
-    ![TDE](./images/tde-026.png "TDE")
-
-3. Third, delete the associated Oracle Wallet files
-
-    ````
-    <copy>./tde_delete_wallet_files.sh</copy>
-    ````
-
-    ![TDE](./images/tde-027.png "TDE")
-
-4. Fourth, start the container and pluggable databases
-
-    ````
-    <copy>./tde_start_db.sh</copy>
-    ````
-
-    ![TDE](./images/tde-028.png "TDE")
-
-    **Note**: This should have restored your database to it's pre-TDE state!
-
-5. Finally, verify the initialization parameters don't say anything about TDE
-
-    ````
-    <copy>./tde_check_init_params.sh</copy>
-    ````
-
-    ![TDE](./images/tde-029.png "TDE")
-
-7. Now, your database is restored to the point in time prior to enabling TDE and you can remove your dabase backup (optional)!
-
-    ````
-    <copy>./tde_delete_backup_db.sh</copy>
-    ````
-
-    ![TDE](./images/tde-030.png "TDE")
-
--->
 
 You may now proceed to the next lab!
 

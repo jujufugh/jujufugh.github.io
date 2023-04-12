@@ -63,8 +63,6 @@ This lab assumes you have:
     </copy>
     ````
 
-    ![substitute user oracle](./images/sudo-oracle.png " ")
-
     Set the environment variables to point to the Oracle binaries.  When prompted for the SID (Oracle Database System Identifier), enter **cdb1**.
     ````
     <copy>
@@ -80,13 +78,13 @@ This lab assumes you have:
     ````
     <copy>
     sqlplus system/Oracle123@localhost:1521/pdb1
-    create tablespace comp_data_ts datafile '/u01/oradata/cdb1/pdb1/comp_data_ts.dbf' size 50M autoextend on default table compress for oltp; 
-    create tablespace comp_idx_ts datafile '/u01/oradata/cdb1/pdb1/comp_idx_ts.dbf' size 50M autoextend on default index compress advanced low;
+    create tablespace comp_data_ts datafile '/u01/oradata/cdb1/pdb1/comp_data_ts.dbf' size 100M autoextend on default table compress for oltp; 
+    create tablespace comp_idx_ts datafile '/u01/oradata/cdb1/pdb1/comp_idx_ts.dbf' size 100M autoextend on default index compress advanced low;
     </copy>
     ````
     ![ACO](./images/aco-001.png "ACO")
    
-3. Run Compression Advisor for Advanced Row Compression
+1. Run Compression Advisor for Advanced Row Compression
     ````
     <copy>
     SET SERVEROUTPUT ON
@@ -125,7 +123,7 @@ This lab assumes you have:
     ````
     ![ACO](./images/aco-002.png "ACO")
 
-4. Run Compression Advisor for Partition Tables
+2. Run Compression Advisor for Partition Tables
     ````
     <copy>
     SET SERVEROUTPUT ON
@@ -165,7 +163,7 @@ This lab assumes you have:
 
     ![ACO](./images/aco-003.png "ACO")
 
-5. Run compression Advisor for Advanced Index Compression
+3. Run compression Advisor for Advanced Index Compression
     ````
     <copy>
     SET SERVEROUTPUT ON
@@ -213,7 +211,6 @@ This lab assumes you have:
    ALTER TABLE SH.FWEEK_PSCAT_SALES_MV MOVE TABLESPACE COMP_DATA_TS ROW STORE COMPRESS ADVANCED;
    ALTER TABLE SH.DR$SUP_TEXT_IDX$K MOVE TABLESPACE COMP_DATA_TS ROW STORE COMPRESS ADVANCED;
    ALTER TABLE SH.DR$SUP_TEXT_IDX$U MOVE TABLESPACE COMP_DATA_TS ROW STORE COMPRESS ADVANCED;
-   ALTER TABLE SH.DR$SUP_TEXT_IDX$N MOVE TABLESPACE COMP_DATA_TS ROW STORE COMPRESS ADVANCED;
    </copy>
    ````
 
@@ -221,7 +218,19 @@ This lab assumes you have:
 
 ## Task 2: Compression Option 2: Online compression via online redefinition REDEF_TABLE
 
-1. Redefine table online compressed for single table
+1. (Option) Enable session parallelism if needed
+   **Parallel Online Redefinition For LOB Table (Doc ID 2315184.1)**
+   ````
+   <copy>
+   ALTER SESSION ENABLE PARALLEL DML ;
+   ALTER SESSION FORCE PARALLEL DML PARALLEL 2;
+   ALTER SESSION FORCE PARALLEL QUERY PARALLEL 2;
+   ALTER SESSION ENABLE PARALLEL DDL;
+   ALTER SESSION FORCE PARALLEL DDL PARALLEL 2;
+   </copy>
+   ````
+
+2. Redefine table online compressed for single table
 
     ````
     <copy>
@@ -251,13 +260,13 @@ This lab assumes you have:
 
     ![ACO](./images/aco-006-2.png "ACO")
 
-2. Automate Redefine table online compressed for multiple tables
+3. Automate Redefine table online compressed for multiple tables
     ````
     <copy>
     DECLARE
-      v_table_name VARCHAR2(30);
+      v_table_name VARCHAR2(100);
     BEGIN
-      FOR rec IN (SELECT segment_name FROM dba_segments WHERE owner = 'SH' AND tablespace_name='TEST_DATA')
+      FOR rec IN (SELECT segment_name FROM dba_segments WHERE owner = 'SH' AND segment_type = 'TABLE' AND tablespace_name='TEST_DATA')
       LOOP
           v_table_name := rec.segment_name;
           
@@ -287,19 +296,7 @@ This lab assumes you have:
 
     ![ACO](./images/aco-007.png "ACO")
 
-* **(Option) Enable session parallelism if needed**
-   **Parallel Online Redefinition For LOB Table (Doc ID 2315184.1)**
-   ````
-   <copy>
-   ALTER SESSION ENABLE PARALLEL DML ;
-   ALTER SESSION FORCE PARALLEL DML PARALLEL 2;
-   ALTER SESSION FORCE PARALLEL QUERY PARALLEL 2;
-   ALTER SESSION ENABLE PARALLEL DDL;
-   ALTER SESSION FORCE PARALLEL DDL PARALLEL 2;
-   </copy>
-   ````
-
-3.  Exit SQL Plus to the oracle user.
+4.  Exit SQL Plus to the oracle user.
 
     ```
     <copy>
@@ -316,6 +313,62 @@ This lab assumes you have:
    du -hs /u01/oradata/comp_data_ts.dbf.gz
    </copy>
    ````
+
+   ![ACO](./images/aco-008.png "ACO")
+
+## Task 6: Restore the database if needed
+
+1. First, execute this script to restore the pfile
+
+    ````
+    <copy>./tde_restore_init_parameters.sh</copy>
+    ````
+
+    ![TDE](./images/tde-025.png "TDE")
+
+
+2. Second, restore the database (this may take some time)
+
+    ````
+    <copy>./tde_restore_db.sh</copy>
+    ````
+
+    ![TDE](./images/tde-026.png "TDE")
+
+3. Third, delete the associated Oracle Wallet files
+
+    ````
+    <copy>./tde_delete_wallet_files.sh</copy>
+    ````
+
+    ![TDE](./images/tde-027.png "TDE")
+
+4. Fourth, start the container and pluggable databases
+
+    ````
+    <copy>./tde_start_db.sh</copy>
+    ````
+
+    ![TDE](./images/tde-028.png "TDE")
+
+    **Note**: This should have restored your database to it's pre-TDE state!
+
+5. Finally, verify the initialization parameters don't say anything about TDE
+
+    ````
+    <copy>./tde_check_init_params.sh</copy>
+    ````
+
+    ![TDE](./images/tde-029.png "TDE")
+
+7. Now, your database is restored to the point in time prior to enabling TDE and you can remove your dabase backup (optional)!
+
+    ````
+    <copy>./tde_delete_backup_db.sh</copy>
+    ````
+
+    ![TDE](./images/tde-030.png "TDE")
+
 
 ## Learn More
   - How to Compress a Table While it is Online (Doc ID 1353967.1)
@@ -337,6 +390,6 @@ This lab assumes you have:
     - Online redefinition restrictions :https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/managing-tables.html#GUID-CB5589F0-B328-4620-8809-C53696972B4C
 ## Acknowledgements
 
-- **Author** - Madhusudhan Rao, Principal Product Manager, Database
-* **Contributors** - Kevin Lazarz, Senior Principal Product Manager, Database and Gregg Christman, Senior Product Manager
-* **Last Updated By/Date** -  Madhusudhan Rao, Feb 2022 
+- **Author** - Royce Fu, Noah Galloso
+* **Contributors** - Richard Evans
+* **Last Updated By/Date** -  

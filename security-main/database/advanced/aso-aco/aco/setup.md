@@ -46,8 +46,8 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     ````
     <copy>
     . oraenv
-    </copy>
     cdb1
+    </copy>
     ````
     ![environment variables](./images/oraenv.png " ")
 
@@ -73,7 +73,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     create tablespace TEST_DATA datafile '/u01/oradata/cdb1/pdb1/test_data.dbf' size 300m autoextend on;
     </copy>
     ````
-    ![start sqlplus](./images/start-sqlplus.png " ")
+    ![start sqlplus](./images/start-sqlplus-create-tbs.png " ")
 
 6.  Install the Sample Schemas by running the script below.
 
@@ -81,13 +81,18 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     <copy>
     @/home/oracle/DBSecLab/db-sample-schemas-19c/sales_history/sh_main Oracle123 test_data temp Oracle123 /home/oracle/DBSecLab/db-sample-schemas-19c/sales_history/ /home/oracle/ v3 localhost:1521/pdb1
     create index sh.sales_cust_channel_promo_idx on sh.sales(cust_id, channel_id, promo_id);
+    </copy>
+    ````
+
+    ````
+    <copy>
     col table_name for a30
     set line 2000 pages 2000
     select table_name, num_rows from user_tables order by table_name;
     </copy>
     ````
 
-    ![schema installed](./images/schemas-created.png " " )
+    ![schema installed](./images/tables-created.png " " )
    
 7.  Exit SQL Plus to the oracle user.
 
@@ -106,17 +111,15 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     cp /u01/oradata/cdb1/pdb1/test_data.dbf /u01/oradata/test_data.dbf
     </copy>
     ````
-    ![return to opc](images/backup-test-data-file.png)
-
     ````
     <copy>
     gzip /u01/oradata/test_data.dbf
     du -hs /u01/oradata/test_data.dbf.gz
     </copy>
     ````
-    ![return to opc](images/storage-compression-simulation.png)
+    ![return to opc](images/storage-compress-simulation.png)
 
-**Note: As you can see, we just backed up the test_data.dbf datafile and compressed it from 311MB to 14M.** 
+**Note: As you can see, we just backed up the test_data.dbf datafile and compressed it from 317MB to 17M.** 
 
 Congratulations! Now you have the environment to run the labs.
 
@@ -134,6 +137,6 @@ The above copyright notice and this permission notice shall be included in all c
 
 ## **Acknowledgements**
 
-- **Author** - Royce Fu
-- **Contributors** - Noah Galloso, Richard Evans
-* **Last Updated By/Date** - Valentin Tabacaru, Mar 2023
+- **Author** - Royce Fu, Noah Galloso
+- **Contributors** - Richard Evans
+* **Last Updated By/Date** - 
