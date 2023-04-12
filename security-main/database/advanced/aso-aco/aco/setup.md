@@ -80,6 +80,10 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     ````
     <copy>
     @/home/oracle/DBSecLab/db-sample-schemas-19c/sales_history/sh_main Oracle123 test_data temp Oracle123 /home/oracle/DBSecLab/db-sample-schemas-19c/sales_history/ /home/oracle/ v3 localhost:1521/pdb1
+    create index sh.sales_cust_channel_promo_idx on sh.sales(cust_id, channel_id, promo_id);
+    col table_name for a30
+    set line 2000 pages 2000
+    select table_name, num_rows from user_tables order by table_name;
     </copy>
     ````
 

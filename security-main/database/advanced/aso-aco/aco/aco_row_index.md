@@ -74,13 +74,13 @@ This lab assumes you have:
     ````
     ![environment variables](./images/oraenv.png " ")
 
-2. Login using SQL*Plus as the **oracle** user and create compressed tablespaces for table and indexes
+2. Login using SQL*Plus as the **oracle** user and Create new tablespaces with encryption and compression enabled
+  **Create new encrypted and compressed tablespace - 	Primary Note: Overview of Oracle Tablespace Management (Doc ID 1493350.1)**
 
     ````
     <copy>
     sqlplus system/Oracle123@localhost:1521/pdb1
     create tablespace comp_data_ts datafile '/u01/oradata/cdb1/pdb1/comp_data_ts.dbf' size 50M autoextend on default table compress for oltp; 
-
     create tablespace comp_idx_ts datafile '/u01/oradata/cdb1/pdb1/comp_idx_ts.dbf' size 50M autoextend on default index compress advanced low;
     </copy>
     ````
@@ -125,9 +125,9 @@ This lab assumes you have:
     ````
     ![ACO](./images/aco-002.png "ACO")
 
+4. Run Compression Advisor for Partition Tables
     ````
     <copy>
-    -- partition tables
     SET SERVEROUTPUT ON
     DECLARE
       l_blkcnt_cmp   PLS_INTEGER;
@@ -165,7 +165,7 @@ This lab assumes you have:
 
     ![ACO](./images/aco-003.png "ACO")
 
-4. Run compression Advisor for Advanced Index Compression
+5. Run compression Advisor for Advanced Index Compression
     ````
     <copy>
     SET SERVEROUTPUT ON
@@ -180,7 +180,7 @@ This lab assumes you have:
       DBMS_COMPRESSION.get_compression_ratio (
         scratchtbsname  => 'COMP_IDX_TS',
         ownname         => 'SH',
-        objname         => 'SALES_CUST_BIX',
+        objname         => 'SALES_CUST_CHANNEL_PROMO_IDX',
         subobjname      => NULL,
         comptype        => DBMS_COMPRESSION.COMP_INDEX_ADVANCED_LOW,
         blkcnt_cmp      => l_blkcnt_cmp,
@@ -204,219 +204,137 @@ This lab assumes you have:
     </copy>
     ````
 
-5. Run Compression Advisor for Advanced Lob Compression
+    ![ACO](./images/aco-004.png "ACO")
+
+## Task 2: Compression Option 1: Offline compression method
+   ````
+   <copy>
+   ALTER TABLE SH.CAL_MONTH_SALES_MV MOVE TABLESPACE COMP_DATA_TS ROW STORE COMPRESS ADVANCED;
+   ALTER TABLE SH.FWEEK_PSCAT_SALES_MV MOVE TABLESPACE COMP_DATA_TS ROW STORE COMPRESS ADVANCED;
+   ALTER TABLE SH.DR$SUP_TEXT_IDX$K MOVE TABLESPACE COMP_DATA_TS ROW STORE COMPRESS ADVANCED;
+   ALTER TABLE SH.DR$SUP_TEXT_IDX$U MOVE TABLESPACE COMP_DATA_TS ROW STORE COMPRESS ADVANCED;
+   ALTER TABLE SH.DR$SUP_TEXT_IDX$N MOVE TABLESPACE COMP_DATA_TS ROW STORE COMPRESS ADVANCED;
+   </copy>
+   ````
+
+   ![ACO](./images/aco-005.png "ACO")
+
+## Task 2: Compression Option 2: Online compression via online redefinition REDEF_TABLE
+
+1. Redefine table online compressed for single table
+
     ````
     <copy>
-    --COMPRESSION ON A CLOB in a table
-    SET SERVEROUTPUT ON
-    DECLARE
-      l_blkcnt_cmp    PLS_INTEGER;
-      l_blkcnt_uncmp  PLS_INTEGER;
-      l_lobcnt        PLS_INTEGER;
-      l_cmp_ratio     NUMBER;
-      l_comptype_str  VARCHAR2(32767);
     BEGIN
-      DBMS_COMPRESSION.get_compression_ratio (
-        scratchtbsname  => 'USERS',
-        tabowner        => 'HR',
-        tabname         => 'TAB1',
-        lobname         => 'CLOB_DESCRIPTION',
-        partname        => NULL,
-        comptype        => DBMS_COMPRESSION.comp_lob_medium,
-        blkcnt_cmp      => l_blkcnt_cmp,
-        blkcnt_uncmp    => l_blkcnt_uncmp,
-        lobcnt          => l_lobcnt,
-        cmp_ratio       => l_cmp_ratio,
-        comptype_str    => l_comptype_str,
-        subset_numrows  => DBMS_COMPRESSION.comp_ratio_lob_maxrows
-      );
-
-      DBMS_OUTPUT.put_line('Number of blocks used (compressed)       : ' ||  l_blkcnt_cmp);
-      DBMS_OUTPUT.put_line('Number of blocks used (uncompressed)     : ' ||  l_blkcnt_uncmp);
-      DBMS_OUTPUT.put_line('Number of rows in a block (compressed)   : ' ||  l_lobcnt);
-      DBMS_OUTPUT.put_line('Number of lobs sampled                   : ' ||  l_lobcnt);
-      DBMS_OUTPUT.put_line( 'Estimated Compression Ratio of Sample   : ' || l_cmp_ratio);
-      DBMS_OUTPUT.put_line('Compression type                         : ' ||  l_comptype_str);
+      DBMS_REDEFINITION.REDEF_TABLE(
+        uname                        => 'SH',
+        tname                        => 'PRODUCTS',
+        table_compression_type       => 'ROW STORE COMPRESS ADVANCED',
+        table_part_tablespace        => 'COMP_DATA_TS',
+        index_key_compression_type   => 'COMPRESS ADVANCED LOW',
+        index_tablespace             => 'COMP_IDX_TS',
+        lob_compression_type         => 'COMPRESS HIGH',
+        lob_tablespace               => 'COMP_IDX_TS',
+        lob_store_as                 => 'SECUREFILE');
     END;
     /
     </copy>
+    ````  
+
+    ![ACO](./images/aco-006-1.png "ACO")
+
+    ````
+    <copy>
+    select segment_name, segment_type from dba_segments where owner='SH' and tablespace_name in ('COMP_DATA_TS','COMP_IDX_TS');
+    </copy>
     ````
 
+    ![ACO](./images/aco-006-2.png "ACO")
 
-## Task 2: Create a new tablespace with encryption and compression enabled
-* Get the list of the table segments information including types for compression and encryption in the database order by size(check for partitioned tables)
-* Create new encrypted and compressed tablespace - 	Primary Note: Overview of Oracle Tablespace Management (Doc ID 1493350.1)
-    create tablespace "REPOSIT_TS"
-    DATAFILE <DATAFILE_DISKGROUP> size 5M
-    EXTENT MANAGEMENT LOCAL uniform size 1M
-    SEGMENT SPACE MANAGEMENT AUTO
-    encryption using 'AES256'
-    default compress for oltp storage(ENCRYPT);
+2. Automate Redefine table online compressed for multiple tables
+    ````
+    <copy>
+    DECLARE
+      v_table_name VARCHAR2(30);
+    BEGIN
+      FOR rec IN (SELECT segment_name FROM dba_segments WHERE owner = 'SH' AND tablespace_name='TEST_DATA')
+      LOOP
+          v_table_name := rec.segment_name;
+          
+          BEGIN
+            DBMS_REDEFINITION.REDEF_TABLE(
+                uname                        => 'SH',
+                tname                        =>  v_table_name,
+                table_compression_type       => 'ROW STORE COMPRESS ADVANCED',
+                table_part_tablespace        => 'COMP_DATA_TS',
+                index_key_compression_type   => 'COMPRESS ADVANCED LOW',
+                index_tablespace             => 'COMP_IDX_TS',
+                lob_compression_type         => 'COMPRESS HIGH',
+                lob_tablespace               => 'COMP_IDX_TS',
+                lob_store_as                 => 'SECUREFILE');
+          END;
+      END LOOP;
+    END;
+    /
+    </copy>
+    ````  
 
-## Task 3: Online compression via Online Redefinition REDEF_TABLE
+    ````
+    <copy>
+    select segment_name, segment_type from dba_segments where owner='SH' and tablespace_name in ('COMP_DATA_TS','COMP_IDX_TS');
+    </copy>
+    ````
 
-* Enable session parallelism if needed, test table without parallelism first - 	Parallel Online Redefinition For LOB Table (Doc ID 2315184.1)
-  - ALTER SESSION ENABLE PARALLEL DML ;
-  - ALTER SESSION FORCE PARALLEL DML PARALLEL <CPU_COUNT> ;
-  - ALTER SESSION FORCE PARALLEL QUERY PARALLEL <CPU_COUNT> ;
-  - ALTER SESSION ENABLE PARALLEL DDL;
-  - ALTER SESSION FORCE PARALLEL DDL PARALLEL <CPU_COUNT>;
+    ![ACO](./images/aco-007.png "ACO")
 
-* Redefine table online compressed
+* **(Option) Enable session parallelism if needed**
+   **Parallel Online Redefinition For LOB Table (Doc ID 2315184.1)**
+   ````
+   <copy>
+   ALTER SESSION ENABLE PARALLEL DML ;
+   ALTER SESSION FORCE PARALLEL DML PARALLEL 2;
+   ALTER SESSION FORCE PARALLEL QUERY PARALLEL 2;
+   ALTER SESSION ENABLE PARALLEL DDL;
+   ALTER SESSION FORCE PARALLEL DDL PARALLEL 2;
+   </copy>
+   ````
+
+3.  Exit SQL Plus to the oracle user.
+
+    ```
+    <copy>
+    exit
+    </copy>
+    ```
+## Task 5: Space benefit of Oracle TDE with compression 
+   ````
+   <copy>
+   du -hs /u01/oradata/cdb1/pdb1/comp_data_ts.dbf
+   du -hs /u01/oradata/cdb1/pdb1/comp_idx_ts.dbf
+   cp /u01/oradata/cdb1/pdb1/comp_data_ts.dbf /u01/oradata/comp_data_ts.dbf
+   gzip /u01/oradata/comp_data_ts.dbf
+   du -hs /u01/oradata/comp_data_ts.dbf.gz
+   </copy>
+   ````
+
+## Learn More
   - How to Compress a Table While it is Online (Doc ID 1353967.1)
   - Primary Note: Overview of Online Redefinition of Tables (DBMS_REDEFINITION) (Doc ID 1357825.1)
   - Online Redefinition using DBMS_REDEFINITION.REDEF_TABLE (Doc ID 2412059.1)
   - Use following DBMS_REDEFINITION.REDEF_TABLE procedure to update index and lob compression type and designated tablespaces
   - Reference : https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_REDEFINITION.html#GUID-3E72906F-0A2D-4970-B299-DDBCC32CB5D3
-  BEGIN
-     DBMS_REDEFINITION.REDEF_TABLE(
-       uname                        => 'TABOWNER2',
-       tname                        => 'EMP2',
-       table_compression_type       => 'ROW STORE COMPRESS ADVANCED',
-       table_part_tablespace        => 'NEWTBS',
-       index_key_compression_type   => 'COMPRESS ADVANCED LOW',
-       index_tablespace             => 'NEWIDXTBS',
-       lob_compression_type         => 'COMPRESS HIGH',
-       lob_tablespace               => 'SLOBTBS',
-       lob_store_as                 => 'SECUREFILE');
-  END;
-  - For table partitions maybe use online move operation is better, after partition move, local indexes require rebuild
+
+  - [OLTP Compression](https://docs.oracle.com/cd/E29633_01/CDMOG/GUID-090FB709-9BC1-44C7-9855-B49AF8AAF587.htm) 
+ 
+  -  For table partitions maybe use online move operation is better, after partition move, local indexes require rebuild
     - ALTER TABLE sales MOVE PARTITION sales_q1_1998 TABLESPACE ts_arch_q1_1998 ROW STORE COMPRESS ADVANCED;
     - ALTER TABLE sales MODIFY PARTITION sales_q1_1998 REBUILD UNUSABLE LOCAL INDEXES;
-* Iterate until all tables are compressed & encrypted.
-* Performance testing of application using existing tests
-* Compare to baseline.
+  - Iterate until all tables are compressed & encrypted.
+  - Performance testing of application using existing tests
+  - Compare to baseline.
 
-* Additional Notes:
-  - Online redefinition restrictions :https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/managing-tables.html#GUID-CB5589F0-B328-4620-8809-C53696972B4C
-
-
-## Task 4: Offline compression method
-
-
-## Task 5: Create gzip backup of the encrypted and compressed sample data datafile
-
-
-## Task 6: Space benefit of Oracle TDE with compression 
-
-
-  
-## Task 1: Enable OLTP table compression 
-
-1. Create table Emp with OLTP table compression
-
-      ```
-      <copy>
-      CREATE TABLE emp  (
-               emp_id NUMBER , first_name VARCHAR2(128) , last_name VARCHAR2(128) 
-            ) COMPRESS FOR OLTP;
-      </copy>
-      ```  
-
-2. Verify compression.
-
-      ```
-      <copy>
-      SELECT table_name, compression, compress_for FROM user_tables where table_name = 'EMP' ;
-      </copy>
-      ```  
-
-      ![View EMP Table Compression](images/emp-table.png "View EMP Table Compression")
-
-## Task 2: SecureFiles LOB Deduplication
-
-1. Create tablespace. 
-
-      ```
-      <copy> 
-      CREATE TABLESPACE lob_tbs 
-         DATAFILE 'tbs1_data.dbf' 
-         SIZE 10m; 
-      </copy>
-      ```
-
-2. Create table with STORE AS SECUREFILE option
-
-      ```
-      <copy> 
-      CREATE TABLE images (
-      image_id NUMBER,
-      image BLOB)
-      LOB(image) STORE AS SECUREFILE (TABLESPACE lob_tbs DEDUPLICATE);
-      </copy>
-      ```
-
-3. Display compression details from user\_lobs      
-
-      ```
-      <copy> 
-      SELECT table_name, column_name,  retention,  compression, deduplication, in_row, format, securefile
-      FROM user_lobs where table_name='IMAGES'; 
-      </copy>
-      ```
-
-      ![User ILM Policies](images/images.png "User ILM Policies")
- 
-## Task 3: SecureFiles LOB compression
-
-1. Create table with STORE AS SECUREFILE option 
- 
-
-      ```
-      <copy>
-      CREATE TABLE newimages (
-      image_id NUMBER,
-      image BLOB)
-      LOB(image) STORE AS SECUREFILE (TABLESPACE lob_tbs COMPRESS);
-      </copy>
-      ```
-
-2. View Data in user\_lobs table.      
-
-      ```
-      <copy> 
-      SELECT table_name, column_name,  retention,  compression, deduplication, in_row, format, securefile
-      FROM user_lobs where table_name='NEWIMAGES'; 
-      </copy>
-      ```
-      
-
-      ![User ILM Policies](images/new-images.png "User ILM Policies")
- 
-## Task 4: Cleanup
-
-1. When you are finished testing the example, you can clean up the environment by dropping the tables 
- 
-      ```
-      <copy>
-      drop table images purge;  
-      </copy>
-      ```
-
-      ```
-      <copy> 
-      drop table newimages purge; 
-      </copy>
-      ```
-
-      ```
-      <copy> 
-      drop table emp purge;  
-      </copy>
-      ```
-
-      ```
-      <copy>   
-      drop tablespace lob_tbs;
-      </copy>
-      ```
-  
-   You successfully made it to the end this lab OLTP Compression. You may now [proceed to the next lab](#next).  
-
-## Learn More
-
-* [OLTP Compression](https://docs.oracle.com/cd/E29633_01/CDMOG/GUID-090FB709-9BC1-44C7-9855-B49AF8AAF587.htm) 
- 
+  - Additional Notes:
+    - Online redefinition restrictions :https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/managing-tables.html#GUID-CB5589F0-B328-4620-8809-C53696972B4C
 ## Acknowledgements
 
 - **Author** - Madhusudhan Rao, Principal Product Manager, Database
