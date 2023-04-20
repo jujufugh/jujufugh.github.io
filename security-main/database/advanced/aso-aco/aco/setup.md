@@ -104,7 +104,10 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
 
     ![return to opc](images/return-to-opc.png)
 
-7.  Create gzip backup of the sample data datafile (storage compression simulation)
+8.  Create gzip backup of the sample data datafile (storage compression simulation)
+
+    **Note**: Your numbers maybe slighlty different then what is shown in the screenshot, but the point is to show that compression has occured. As long is that is still shown for you, you are good to keep going through the lab.
+
     ````
     <copy>
     du -hs /u01/oradata/cdb1/pdb1/test_data.dbf
@@ -119,9 +122,9 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     ````
     ![return to opc](images/storage-compress-simulation.png)
 
-**Note: As you can see, we just backed up the test_data.dbf datafile and compressed it from 317MB to 17M.** 
+    As you can see, we just backed up the test_data.dbf datafile and compressed it from 317MB to 17MB.
 
-Congratulations! Now you have the environment to run the labs.
+**Congratulations!** Now you have the environment to run the labs.
 
 You may now **proceed to the next lab**.
 
@@ -137,6 +140,9 @@ The above copyright notice and this permission notice shall be included in all c
 
 ## **Acknowledgements**
 
-- **Author** - Royce Fu, Noah Galloso
-- **Contributors** - Richard Evans
+* **Author**
+  * Royce Fu, Principal Database Platform Specialist
+  * Noah Galloso, Solution Engineer, North America Specialist Hub
+* **Contributors**
+  * Richard Evans, Database Security Product Management
 * **Last Updated By/Date** - 

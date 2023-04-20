@@ -34,6 +34,10 @@ SecureFiles LOB Compression utilizes industry-standard compression algorithms to
 
 **Note**: The compression ratio achieved, in a given environment, depends on the nature of the data being compressed.
 
+### Goals
+
+In completing this lab, you will now see how to best use Advanced Compression alongside Transparent Data Encryption. This lab demonstrates that you can secure your data at rest while still saving space.
+
 ### Objectives
  
 In this lab, you will enable:
@@ -46,7 +50,8 @@ This lab assumes you have:
 
 * A LiveLabs Cloud account and assigned compartment
 * The IP address and instance name for your DB19c Compute instance
-* Successfully logged into your LiveLabs account 
+* Successfully logged into your LiveLabs account
+* Completed Lab: Oracle Transparent Data Encyrption (TDE) 
 
 
 ## Task 1: Compression Advisor to estimate the segment compression ratio
@@ -84,7 +89,10 @@ This lab assumes you have:
     ````
     ![ACO](./images/aco-001.png "ACO")
    
-1. Run Compression Advisor for Advanced Row Compression
+3. Run Compression Advisor for Advanced Row Compression
+   
+   **Note**: Again, here your numbers may be different then what is in the screenshot, but as long as they look similar, you good to keep progressing through the lab.
+
     ````
     <copy>
     SET SERVEROUTPUT ON
@@ -123,7 +131,10 @@ This lab assumes you have:
     ````
     ![ACO](./images/aco-002.png "ACO")
 
-2. Run Compression Advisor for Partition Tables
+4. Run Compression Advisor for Partition Tables
+   
+   **Note**: Again, here your numbers may be different then what is in the screenshot, but as long as they look similar, you good to keep progressing through the lab.
+
     ````
     <copy>
     SET SERVEROUTPUT ON
@@ -163,7 +174,10 @@ This lab assumes you have:
 
     ![ACO](./images/aco-003.png "ACO")
 
-3. Run compression Advisor for Advanced Index Compression
+5. Run Compression Advisor for Advanced Index Compression
+   
+   **Note**: Again, here your numbers may be different then what is in the screenshot, but as long as they look similar, you good to keep progressing through the lab.
+
     ````
     <copy>
     SET SERVEROUTPUT ON
@@ -205,6 +219,9 @@ This lab assumes you have:
     ![ACO](./images/aco-004.png "ACO")
 
 ## Task 2: Compression Option 1: Offline compression method
+   
+   **Note**: *Add note here about the differences between offline and online compression and why use one over the other.*
+   
    ````
    <copy>
    ALTER TABLE SH.CAL_MONTH_SALES_MV MOVE TABLESPACE COMP_DATA_TS ROW STORE COMPRESS ADVANCED;
@@ -216,7 +233,7 @@ This lab assumes you have:
 
    ![ACO](./images/aco-005.png "ACO")
 
-## Task 2: Compression Option 2: Online compression via online redefinition REDEF_TABLE
+## Task 3: Compression Option 2: Online compression via online redefinition REDEF_TABLE
 
 1. (Option) Enable session parallelism if needed
    **Parallel Online Redefinition For LOB Table (Doc ID 2315184.1)**
@@ -261,6 +278,9 @@ This lab assumes you have:
     ![ACO](./images/aco-006-2.png "ACO")
 
 3. Automate Redefine table online compressed for multiple tables
+
+    **Note**: This step may take a while, so do not worry if it seems to be taking a long time.
+
     ````
     <copy>
     DECLARE
@@ -303,7 +323,10 @@ This lab assumes you have:
     exit
     </copy>
     ```
-## Task 5: Space benefit of Oracle TDE with compression 
+## Task 4: Space benefit of Oracle TDE with compression
+
+  **Note**: Again, the numbers you get may be different then the screenshot, but the point is to show compression, so if that is still visible, you have done this lab successfully.
+
    ````
    <copy>
    du -hs /u01/oradata/cdb1/pdb1/comp_data_ts.dbf
@@ -316,7 +339,9 @@ This lab assumes you have:
 
    ![ACO](./images/aco-008.png "ACO")
 
-## Task 6: Restore the database if needed
+   As you can see here, we went from a size of 414MB to 82MB which is a significant decrease in size showing successful compression of an encrypted tablespace.
+
+## Task 5: Restore the database if needed
 
 1. First, execute this script to restore the pfile
 
@@ -390,6 +415,9 @@ This lab assumes you have:
     - Online redefinition restrictions :https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/managing-tables.html#GUID-CB5589F0-B328-4620-8809-C53696972B4C
 ## Acknowledgements
 
-- **Author** - Royce Fu, Noah Galloso
-* **Contributors** - Richard Evans
-* **Last Updated By/Date** -  
+* **Author**
+  * Royce Fu, Principal Database Platform Specialist
+  * Noah Galloso, Solution Engineer, North America Specialist Hub
+* **Contributors**
+  * Richard Evans, Database Security Product Management
+* **Last Updated By/Date** -   
