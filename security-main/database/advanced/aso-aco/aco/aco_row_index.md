@@ -247,6 +247,8 @@ This lab assumes you have:
    </copy>
    ````
 
+   ![ACO](./images/aco-009.png "ACO")
+
 2. Redefine table online compressed for single table
 
     ````

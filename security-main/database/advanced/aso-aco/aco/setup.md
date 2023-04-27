@@ -65,7 +65,15 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     ![install schema](./images/install-schema-zip1.png " " )
     ![install schema](./images/install-schema-zip2.png " " )
 
-5.  Login using SQL*Plus as the **oracle** user and create TEST_DATA tablespace to prepare for sample schemas installation.  
+5. Run this grep command to verify that the path was proprerly set. Nothing should return when you execute this command.
+
+    ````
+    <copy>
+    grep 'CWD' */*.sql
+    </copy>
+    ````
+
+6. Login using SQL*Plus as the **oracle** user and create TEST_DATA tablespace to prepare for sample schemas installation.  
 
     ````
     <copy>
@@ -75,7 +83,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     ````
     ![start sqlplus](./images/start-sqlplus-create-tbs.png " ")
 
-6.  Install the Sample Schemas by running the script below.
+7.  Install the Sample Schemas by running the script below.
 
     ````
     <copy>
@@ -94,7 +102,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
 
     ![schema installed](./images/tables-created.png " " )
    
-7.  Exit SQL Plus to the oracle user.
+8.  Exit SQL Plus to the oracle user.
 
     ```
     <copy>
@@ -104,7 +112,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
 
     ![return to opc](images/return-to-opc.png)
 
-8.  Create gzip backup of the sample data datafile (storage compression simulation)
+9.  Create gzip backup of the sample data datafile (storage compression simulation)
 
     **Note**: Your numbers maybe slighlty different then what is shown in the screenshot, but the point is to show that compression has occured. As long is that is still shown for you, you are good to keep going through the lab.
 
