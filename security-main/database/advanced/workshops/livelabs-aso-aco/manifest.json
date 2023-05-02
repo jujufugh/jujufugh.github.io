@@ -20,16 +20,22 @@
       "filename": "../../../common/init-start-env/init-start-env.md"
     },
     {
-      "title": "Lab 3: Transparent Data Encryption (TDE)",
-      "description": "In this lab you can see how to leverage Oracle Transparent Data Encryption (TDE)",
-      "publisheddate": "10/20/2020",
-      "filename": "../../advanced-security/tde/tde.md"
+      "title": "Lab 3: Sample Schema Setup",
+      "description": "Setup Schema",
+      "publisheddate": "03/20/2023",
+      "filename": "../../aso-aco/aco/setup.md"
     },
     {
-      "title": "Lab 4: Data Redaction",
-      "description": "In this lab you can see how to leverage Oracle Data Redaction",
-      "publisheddate": "10/20/2020",
-      "filename": "../../advanced-security/data-redaction/data-redaction.md"
+      "title": "Lab 4: Transparent Data Encryption (TDE)",
+      "description": "Create new encrypted tablespace which leverages Oracle Transparent Data Encryption (TDE)",
+      "publisheddate": "03/20/2023",
+      "filename": "../../aso-aco/aco/tde.md"
+    },
+    {
+      "title": "Lab 5: Enable advanced compression and online redefinition into encrypted tablespace",
+      "description": "Online Compression to encrypted tablespace via online redefinition",
+      "publisheddate": "03/20/2023",
+      "filename": "../../aso-aco/aco/aco_row_index.md"
     },
     {
       "title": "Need Help?",
