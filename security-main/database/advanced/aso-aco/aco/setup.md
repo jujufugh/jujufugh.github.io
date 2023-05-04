@@ -46,7 +46,6 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     ````
     <copy>
     . oraenv
-    cdb1
     </copy>
     ````
     ![environment variables](./images/oraenv.png " ")

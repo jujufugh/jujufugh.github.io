@@ -73,7 +73,6 @@ This lab assumes you have:
     <copy>
     . oraenv
     </copy>
-    cdb1
     ````
     ![environment variables](./images/oraenv.png " ")
 
@@ -83,8 +82,7 @@ This lab assumes you have:
     ````
     <copy>
     sqlplus system/Oracle123@localhost:1521/pdb1
-    create tablespace comp_data_ts datafile '/u01/oradata/cdb1/pdb1/comp_data_ts.dbf' size 100M autoextend on default table compress for oltp; 
-    create tablespace comp_idx_ts datafile '/u01/oradata/cdb1/pdb1/comp_idx_ts.dbf' size 100M autoextend on default index compress advanced low;
+    create tablespace comp_data_ts datafile '/u01/oradata/cdb1/pdb1/comp_data_ts.dbf' size 50M autoextend on default table compress for oltp; 
     </copy>
     ````
     ![ACO](./images/aco-001.png "ACO")
@@ -190,7 +188,7 @@ This lab assumes you have:
       l_comptype_str  VARCHAR2(32767);
     BEGIN
       DBMS_COMPRESSION.get_compression_ratio (
-        scratchtbsname  => 'COMP_IDX_TS',
+        scratchtbsname  => 'COMP_DATA_TS',
         ownname         => 'SH',
         objname         => 'SALES_CUST_CHANNEL_PROMO_IDX',
         subobjname      => NULL,
@@ -216,11 +214,18 @@ This lab assumes you have:
     </copy>
     ````
 
-    ![ACO](./images/aco-004.png "ACO")
+    ![ACO](./images/aco-004-2.png "ACO")
 
 ## Task 2: Compression Option 1: Offline compression method
    
-   **Note**: *Add note here about the differences between offline and online compression and why use one over the other.*
+   **Note**: **Offline Compression** uses **ALTER TABLE MOVE** syntax to move the data segment into a different tablespace. During the data segment reorganization, the downtime is required for the application due to the underlying serialization mechanism on the segment. Additionally, we need to rebuild all indexes associated with the moved data segments.
+
+   **Online Compression** uses **Oracle Online Redefinition** technology. It is recommended approach for the customers who seek minimum downtime during the **Advanced Compress** and any other data reorganization operation. Online Redefinition only needs to lock the underlying segments for very short amount of time to sync the final changes to complete the segments reorganization. 
+   
+   You can read more about Online Redefnition from MOS note:
+  - How to Compress a Table While it is Online (Doc ID 1353967.1)
+  - Primary Note: Overview of Online Redefinition of Tables (DBMS_REDEFINITION) (Doc ID 1357825.1)
+  - Online Redefinition using DBMS_REDEFINITION.REDEF_TABLE (Doc ID 2412059.1)
    
    ````
    <copy>
@@ -235,21 +240,7 @@ This lab assumes you have:
 
 ## Task 3: Compression Option 2: Online compression via online redefinition REDEF_TABLE
 
-1. (Option) Enable session parallelism if needed
-   **Parallel Online Redefinition For LOB Table (Doc ID 2315184.1)**
-   ````
-   <copy>
-   ALTER SESSION ENABLE PARALLEL DML ;
-   ALTER SESSION FORCE PARALLEL DML PARALLEL 2;
-   ALTER SESSION FORCE PARALLEL QUERY PARALLEL 2;
-   ALTER SESSION ENABLE PARALLEL DDL;
-   ALTER SESSION FORCE PARALLEL DDL PARALLEL 2;
-   </copy>
-   ````
-
-   ![ACO](./images/aco-009.png "ACO")
-
-2. Redefine table online compressed for single table
+1. Redefine table online compressed for single table
 
     ````
     <copy>
@@ -260,26 +251,28 @@ This lab assumes you have:
         table_compression_type       => 'ROW STORE COMPRESS ADVANCED',
         table_part_tablespace        => 'COMP_DATA_TS',
         index_key_compression_type   => 'COMPRESS ADVANCED LOW',
-        index_tablespace             => 'COMP_IDX_TS',
+        index_tablespace             => 'COMP_DATA_TS',
         lob_compression_type         => 'COMPRESS HIGH',
-        lob_tablespace               => 'COMP_IDX_TS',
+        lob_tablespace               => 'COMP_DATA_TS',
         lob_store_as                 => 'SECUREFILE');
     END;
     /
     </copy>
     ````  
 
-    ![ACO](./images/aco-006-1.png "ACO")
+    ![ACO](./images/aco-006-3.png "ACO")
 
     ````
     <copy>
-    select segment_name, segment_type from dba_segments where owner='SH' and tablespace_name in ('COMP_DATA_TS','COMP_IDX_TS');
+    set pagesize 20
+    col segment_name for a50
+    select segment_name, segment_type, tablespace_name from dba_segments where owner='SH' and tablespace_name in ('COMP_DATA_TS');
     </copy>
     ````
 
-    ![ACO](./images/aco-006-2.png "ACO")
+    ![ACO](./images/aco-006-4.png "ACO")
 
-3. Automate Redefine table online compressed for multiple tables
+2. Automate Redefine table online compressed for multiple tables
 
     **Note**: This step may take a while, so do not worry if it seems to be taking a long time.
 
@@ -299,9 +292,9 @@ This lab assumes you have:
                 table_compression_type       => 'ROW STORE COMPRESS ADVANCED',
                 table_part_tablespace        => 'COMP_DATA_TS',
                 index_key_compression_type   => 'COMPRESS ADVANCED LOW',
-                index_tablespace             => 'COMP_IDX_TS',
+                index_tablespace             => 'COMP_DATA_TS',
                 lob_compression_type         => 'COMPRESS HIGH',
-                lob_tablespace               => 'COMP_IDX_TS',
+                lob_tablespace               => 'COMP_DATA_TS',
                 lob_store_as                 => 'SECUREFILE');
           END;
       END LOOP;
@@ -310,15 +303,19 @@ This lab assumes you have:
     </copy>
     ````  
 
+    ![ACO](./images/aco-007-1.png "ACO")
+
     ````
     <copy>
-    select segment_name, segment_type from dba_segments where owner='SH' and tablespace_name in ('COMP_DATA_TS','COMP_IDX_TS');
+    set pagesize 40
+    col segment_name for a50
+    select segment_name, segment_type, tablespace_name from dba_segments where owner='SH' and tablespace_name in ('COMP_DATA_TS');
     </copy>
     ````
 
-    ![ACO](./images/aco-007.png "ACO")
+    ![ACO](./images/aco-007-2.png "ACO")
 
-4.  Exit SQL Plus to the oracle user.
+3.  Exit SQL Plus to the oracle user.
 
     ```
     <copy>
@@ -332,16 +329,27 @@ This lab assumes you have:
    ````
    <copy>
    du -hs /u01/oradata/cdb1/pdb1/comp_data_ts.dbf
-   du -hs /u01/oradata/cdb1/pdb1/comp_idx_ts.dbf
-   cp /u01/oradata/cdb1/pdb1/comp_data_ts.dbf /u01/oradata/comp_data_ts.dbf
-   gzip /u01/oradata/comp_data_ts.dbf
-   du -hs /u01/oradata/comp_data_ts.dbf.gz
    </copy>
    ````
 
-   ![ACO](./images/aco-008.png "ACO")
+   ![ACO](./images/aco-008-1.png "ACO")
 
-   As you can see here, we went from a size of 414MB to 82MB which is a significant decrease in size showing successful compression of an encrypted tablespace.
+   As you can see here, we went from a size of 317MB to 51MB which is a significant decrease in size showing successful enablement of advanced compression for an encrypted tablespace. 
+
+## (Option) Enable session parallelism to speed up compression process via online redefinition
+   **Consider to use parallelism for compress your production database data** 
+   **Parallel Online Redefinition For LOB Table (Doc ID 2315184.1)**
+   ````
+   <copy>
+   ALTER SESSION ENABLE PARALLEL DML ;
+   ALTER SESSION FORCE PARALLEL DML PARALLEL 2;
+   ALTER SESSION FORCE PARALLEL QUERY PARALLEL 2;
+   ALTER SESSION ENABLE PARALLEL DDL;
+   ALTER SESSION FORCE PARALLEL DDL PARALLEL 2;
+   </copy>
+   ````
+
+   ![ACO](./images/aco-009.png "ACO")
 
 ## Task 5: Restore the database if needed
 
