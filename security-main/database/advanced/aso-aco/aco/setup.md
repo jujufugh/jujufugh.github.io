@@ -81,7 +81,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     create tablespace TEST_DATA datafile '/u01/oradata/cdb1/pdb1/test_data.dbf' size 300m autoextend on extent management local uniform size 512K;
     </copy>
     ````
-    ![start sqlplus](./images/start-sqlplus-create-tbs.png " ")
+    ![start sqlplus](./images/start-sqlplus-create-tbs-01.png " ")
 
 7.  Install the Sample Schemas by running the script below.
 
@@ -91,6 +91,8 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     create index sh.sales_cust_channel_promo_idx on sh.sales(cust_id, channel_id, promo_id);
     </copy>
     ````
+
+    ![schema installation](./images/sales_history_creation.png " " )
 
     ````
     <copy>
@@ -102,18 +104,6 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
 
     ![schema installed](./images/tables-created.png " " )
 
-    Make a note of the current segment type and the space the segmenet occupies
-
-    ````
-    <copy>
-    select SEGMENT_TYPE,count(*),sum(bytes/(1024*1024)) SIZE_MB 
-    from dba_segments 
-    where TABLESPACE_NAME in ('TEST_DATA') 
-    and SEGMENT_TYPE in ('TABLE', 'TABLE PARTITION', 'INDEX PARTITION', 'INDEX')
-    group by SEGMENT_TYPE order by SEGMENT_TYPE;
-    </copy>
-    ````
-   
 8.  Exit SQL Plus to the oracle user.
 
     ```
@@ -134,15 +124,16 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     cp /u01/oradata/cdb1/pdb1/test_data.dbf /u01/oradata/test_data.dbf
     </copy>
     ````
+
     ````
     <copy>
     gzip /u01/oradata/test_data.dbf
     du -hs /u01/oradata/test_data.dbf.gz
     </copy>
     ````
-    ![return to opc](images/storage-compress-simulation.png)
+    ![storage compression](images/storage-compress-simulation.png)
 
-    As you can see, we just backed up the test_data.dbf datafile and compressed it from 317MB to 17MB.
+    As you can see, we just backed up the test_data.dbf datafile and compressed it from 301MB to 97MB.
 
 **Congratulations!** Now you have the environment to run the labs.
 
