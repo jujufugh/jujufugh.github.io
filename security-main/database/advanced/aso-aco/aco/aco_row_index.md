@@ -327,7 +327,7 @@ This lab assumes you have:
     </copy>
     ````
 
-
+    ![ACO](./images/aco-011.png "ACO")
 
 3.  Exit SQL Plus to the oracle user.
 
