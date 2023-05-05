@@ -276,7 +276,7 @@ This lab assumes you have:
     </copy>
     ````
 
-    ![TDE](./images/tde-020.png "TDE")
+    ![TDE](./images/tde-020-1.png "TDE")
 
     **Note**: As you can see from above result, the storage compression benefits are not longer exists when we encrypt our tablespace, the gzip size of the encrypted datafile is the same as the uncompressed datafile. This is because the storage compression is enabled after data encryption. Using Oracle Advanced Compression, we can compress the data before enable the encryption so that we can make sure that we have zero storage impact when securing our data. 
     <br>

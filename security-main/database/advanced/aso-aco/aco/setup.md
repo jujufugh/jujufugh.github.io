@@ -58,6 +58,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     unzip v19c.zip
     cd db-sample-schemas-19c
     perl -p -i.bak -e 's#__SUB__CWD__#'$(pwd)'#g' *.sql */*.sql */*.dat
+    sed -i 's#COMPRESS,#,#g' sales_history/csh_v3.sql
     </copy>
     ````
 
@@ -77,7 +78,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     ````
     <copy>
     sqlplus system/Oracle123@localhost:1521/pdb1
-    create tablespace TEST_DATA datafile '/u01/oradata/cdb1/pdb1/test_data.dbf' size 300m autoextend on;
+    create tablespace TEST_DATA datafile '/u01/oradata/cdb1/pdb1/test_data.dbf' size 300m autoextend on extent management local uniform size 512K;
     </copy>
     ````
     ![start sqlplus](./images/start-sqlplus-create-tbs.png " ")
@@ -100,6 +101,18 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     ````
 
     ![schema installed](./images/tables-created.png " " )
+
+    Make a note of the current segment type and the space the segmenet occupies
+
+    ````
+    <copy>
+    select SEGMENT_TYPE,count(*),sum(bytes/(1024*1024)) SIZE_MB 
+    from dba_segments 
+    where TABLESPACE_NAME in ('TEST_DATA') 
+    and SEGMENT_TYPE in ('TABLE', 'TABLE PARTITION', 'INDEX PARTITION', 'INDEX')
+    group by SEGMENT_TYPE order by SEGMENT_TYPE;
+    </copy>
+    ````
    
 8.  Exit SQL Plus to the oracle user.
 

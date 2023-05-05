@@ -82,7 +82,8 @@ This lab assumes you have:
     ````
     <copy>
     sqlplus system/Oracle123@localhost:1521/pdb1
-    create tablespace comp_data_ts datafile '/u01/oradata/cdb1/pdb1/comp_data_ts.dbf' size 50M autoextend on default table compress for oltp; 
+    create tablespace comp_data_ts datafile '/u01/oradata/cdb1/pdb1/comp_data_ts.dbf' size 50M autoextend on extent management local uniform size 512K default table compress for oltp; 
+    select tablespace_name, encrypted from dba_tablespaces where tablespace_name = 'COMP_DATA_TS';
     </copy>
     ````
     ![ACO](./images/aco-001.png "ACO")
@@ -281,7 +282,7 @@ This lab assumes you have:
     DECLARE
       v_table_name VARCHAR2(100);
     BEGIN
-      FOR rec IN (SELECT segment_name FROM dba_segments WHERE owner = 'SH' AND segment_type = 'TABLE' AND tablespace_name='TEST_DATA')
+      FOR rec IN (SELECT segment_name FROM dba_segments WHERE owner = 'SH' AND segment_type = 'TABLE' AND tablespace_name='TEST_DATA' UNION SELECT distinct table_name FROM dba_tab_partitions WHERE table_owner='SH' AND tablespace_name='TEST_DATA')
       LOOP
           v_table_name := rec.segment_name;
           
@@ -315,6 +316,19 @@ This lab assumes you have:
 
     ![ACO](./images/aco-007-2.png "ACO")
 
+    Compare the previous segment space usage vesus the space usage after the compression
+    ````
+    <copy>
+    select SEGMENT_TYPE,count(*),sum(bytes/(1024*1024)) SIZE_MB 
+    from dba_segments 
+    where TABLESPACE_NAME in ('COMP_DATA_TS') 
+    and SEGMENT_TYPE in ('TABLE', 'TABLE PARTITION', 'INDEX PARTITION', 'INDEX')
+    group by SEGMENT_TYPE order by SEGMENT_TYPE;
+    </copy>
+    ````
+
+
+
 3.  Exit SQL Plus to the oracle user.
 
     ```
@@ -337,7 +351,10 @@ This lab assumes you have:
    As you can see here, we went from a size of 317MB to 51MB which is a significant decrease in size showing successful enablement of advanced compression for an encrypted tablespace. 
 
 ## (Option) Enable session parallelism to speed up compression process via online redefinition
-   **Consider to use parallelism for compress your production database data** 
+   **Consider to use parallelism for compress your production database data**
+   * Parallelism will use direct-path load, the compression engine can work with a large volume of rows to compress and write out compressed rows to the data blocks in a batch fasion, therefore, it is much efficient than conventional load. 
+   * Using Parallelism using direct-path load mechanism, similar to when you use APPEND hint, the data is inserted above the segment high water mark, which potentially can use more space in the datafile. 
+
    **Parallel Online Redefinition For LOB Table (Doc ID 2315184.1)**
    ````
    <copy>
