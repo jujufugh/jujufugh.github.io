@@ -348,7 +348,7 @@ This lab assumes you have:
 
    ![ACO](./images/aco-008-1.png "ACO")
 
-   As you can see here, we went from a size of 317MB to 51MB which is a significant decrease in size showing successful enablement of advanced compression for an encrypted tablespace. 
+   As you can see here, we went from a size of 317MB to 143MB which is a significant decrease in size showing successful enablement of advanced compression for an encrypted tablespace. 
 
 ## (Option) Enable session parallelism to speed up compression process via online redefinition
    **Consider to use parallelism for compress your production database data**
