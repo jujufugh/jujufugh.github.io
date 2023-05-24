@@ -133,7 +133,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
     ````
     ![storage compression](images/storage-compress-simulation.png)
 
-    As you can see, we just backed up the test_data.dbf datafile and compressed it from 301MB to 97MB.
+    As you can see, we just backed up the test_data.dbf datafile and compressed it from 317MB to 17MB.
 
 **Congratulations!** Now you have the environment to run the labs.
 

@@ -251,6 +251,8 @@ This lab assumes you have:
     </copy>
     ````
 
+    ![ACO](./images/segment_tablespace_information.png "ACO")
+
 2. Redefine table online compressed for single table
 
     ````
@@ -368,11 +370,13 @@ This lab assumes you have:
    **Parallel Online Redefinition For LOB Table (Doc ID 2315184.1)**
    ````
    <copy>
+   sqlplus system/Oracle123@localhost:1521/pdb1
    ALTER SESSION ENABLE PARALLEL DML ;
    ALTER SESSION FORCE PARALLEL DML PARALLEL 2;
    ALTER SESSION FORCE PARALLEL QUERY PARALLEL 2;
    ALTER SESSION ENABLE PARALLEL DDL;
    ALTER SESSION FORCE PARALLEL DDL PARALLEL 2;
+   exit
    </copy>
    ````
 
