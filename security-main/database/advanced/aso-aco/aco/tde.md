@@ -32,8 +32,6 @@ This lab assumes you have:
 | 4 | Create Auto-login Wallet | <5 minutes |
 | 5 | Encrypt Existing Tablespace TEST_DATA | 5 minutes |
 | 6 | Encrypt All New Tablespaces | 5 minutes |
-| 7 | Rekey Master Key | 5 minutes |
-| 8 | View Keystore Details | 5 minutes |
 
 ## Task 1: Allow DB Restore
 
@@ -265,7 +263,7 @@ This lab assumes you have:
     - If the behavior specified by the `ENCRYPT_NEW_TABLESPACES` setting conflicts with the behavior specified by the `TABLESPACE_ENCRYPTION` setting, then the `TABLESPACE_ENCRYPTION` behavior takes precedence
     - So, `ENCRYPT_NEW_TABLESPACES` is automatically set to `ALWAYS` when `TABLESPACE_ENCRYPTION` is set to `AUTO_ENABLE`
     
-3. Finally, create gzip backup of the encrypted sample test_data_enc datafile
+3. Finally, create gzip backup of the encrypted sample `test_data_enc` datafile
 
     ````
     <copy>
@@ -283,78 +281,13 @@ This lab assumes you have:
 
 4. Now, all your new Tablespaces will be encrypted by default!
 
-## Task 7: Rekey Master Key
-
-1. To rekey the container database TDE Master Key (MEK), run the following command
-
-    ````
-    <copy>./tde_rekey_mek_cdb.sh</copy>
-    ````
-
-    - Have a look on the CDB key before rekeying...
-
-    ![TDE](./images/tde-021.png "TDE")
-
-    - ...and after
-
-    ![TDE](./images/tde-022.png "TDE")
-
-    - You can see the new key generated for the container
-
-2. To rekey a Master Key (MEK) for the pluggable database **pdb1**, run the following command
-
-    ````
-    <copy>./tde_rekey_mek_pdb.sh pdb1</copy>
-    ````
-
-    - Have a look on the pdb1 key before rekeying...
-
-    ![TDE](./images/tde-023.png "TDE")
-
-    - ...and after
-
-    ![TDE](./images/tde-024.png "TDE")
-
-    - You can see the new key generated for the pluggable database
-
-3. If you want, you can do the same for **pdb2**
-
-    ````
-    <copy>./tde_rekey_mek_pdb.sh pdb2</copy>
-    ````
-
-    **Note**:
-    - This is not a requirement though
-    - It might be helpful to show some databases with TDE and some without
-
-4. Now that you have a master key, you can begin encrypting tablespaces or column!
-
-## Task 8: View Keystore Details
-
-1. Once you have a keystore, you can run either of these scripts. You will notice there are multiple copies of the **ewallet.p12** file. Every time you make a change, including create or rekey, the ewallet.p12 file is backed up. You will also see the contents of the Oracle Wallet file by using **orapki**
-
-   - View the OS files related to the keystore
-
-    ````
-    <copy>./tde_view_wallet_on_os.sh</copy>
-    ````
-
-   - View the keystore data in the database
-
-    ````
-    <copy>./tde_view_wallet_in_db.sh</copy>
-
-    ````
-
 
 You may now proceed to the next lab!
 
 ## **Appendix**: About the Product
 ### **Overview**
 
-Hard-coded within the Oracle Database core product, this features is part of the *Advanced Security Option (ASO)*
-
-TDE Enables you to encrypt data so that only an authorized recipient can read it.
+Embedded in the kernel of the Oracle Database, the Transparent Data Encryption (TDE) portion of the Advanced Security Option (ASO) allows you enables you to encrypt data so that can only be decrypted by the RDBMS.
 
 Use encryption to protect sensitive data in a potentially unprotected environment, such as data you placed on backup media that is sent to an off-site storage location. You can encrypt individual columns in a database table, or you can encrypt an entire tablespace.
 

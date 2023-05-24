@@ -241,7 +241,17 @@ This lab assumes you have:
 
 ## Task 3: Compression Option 2: Online compression via online redefinition REDEF_TABLE
 
-1. Redefine table online compressed for single table
+1. Check the segment tablespace information before online compression 
+
+    ````
+    <copy>
+    set pagesize 20
+    col segment_name for a50
+    select segment_name, segment_type, tablespace_name from dba_segments where owner='SH';
+    </copy>
+    ````
+
+2. Redefine table online compressed for single table
 
     ````
     <copy>
@@ -273,7 +283,7 @@ This lab assumes you have:
 
     ![ACO](./images/aco-006-4.png "ACO")
 
-2. Automate Redefine table online compressed for multiple tables
+3. Automate Redefine table online compressed for multiple tables
 
     **Note**: This step may take a while, so do not worry if it seems to be taking a long time.
 
@@ -329,7 +339,7 @@ This lab assumes you have:
 
     ![ACO](./images/aco-011.png "ACO")
 
-3.  Exit SQL Plus to the oracle user.
+4.  Exit SQL Plus to the oracle user.
 
     ```
     <copy>
@@ -424,16 +434,16 @@ This lab assumes you have:
 
 ## Learn More
   - How to Compress a Table While it is Online (Doc ID 1353967.1)
-  - Primary Note: Overview of Online Redefinition of Tables (DBMS_REDEFINITION) (Doc ID 1357825.1)
-  - Online Redefinition using DBMS_REDEFINITION.REDEF_TABLE (Doc ID 2412059.1)
-  - Use following DBMS_REDEFINITION.REDEF_TABLE procedure to update index and lob compression type and designated tablespaces
+  - Primary Note: Overview of Online Redefinition of Tables (`DBMS_REDEFINITION`) (Doc ID 1357825.1)
+  - Online Redefinition using `DBMS_REDEFINITION.REDEF_TABLE` (Doc ID 2412059.1)
+  - Use following `DBMS_REDEFINITION.REDEF_TABLE` procedure to update index and lob compression type and designated tablespaces
   - Reference : https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_REDEFINITION.html#GUID-3E72906F-0A2D-4970-B299-DDBCC32CB5D3
 
   - [OLTP Compression](https://docs.oracle.com/cd/E29633_01/CDMOG/GUID-090FB709-9BC1-44C7-9855-B49AF8AAF587.htm) 
  
   -  For table partitions maybe use online move operation is better, after partition move, local indexes require rebuild
-    - ALTER TABLE sales MOVE PARTITION sales_q1_1998 TABLESPACE ts_arch_q1_1998 ROW STORE COMPRESS ADVANCED;
-    - ALTER TABLE sales MODIFY PARTITION sales_q1_1998 REBUILD UNUSABLE LOCAL INDEXES;
+    - `ALTER TABLE sales MOVE PARTITION sales_q1_1998 TABLESPACE ts_arch_q1_1998 ROW STORE COMPRESS ADVANCED;`
+    - `ALTER TABLE sales MODIFY PARTITION sales_q1_1998 REBUILD UNUSABLE LOCAL INDEXES;`
   - Iterate until all tables are compressed & encrypted.
   - Performance testing of application using existing tests
   - Compare to baseline.
