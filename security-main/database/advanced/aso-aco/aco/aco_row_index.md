@@ -55,7 +55,7 @@ This lab assumes you have:
 
 
 ## Task 1: Compression Advisor to estimate the segment compression ratio
-1. Run a *whoami* to ensure the value *oracle* comes back.)
+1. Run a *whoami* to ensure the value *oracle* comes back.
 
     Note: If you are running in Windows using putty, ensure your Session Timeout is set to greater than 0.
     ```
@@ -226,7 +226,7 @@ This lab assumes you have:
    You can read more about Online Redefnition from MOS note:
   - How to Compress a Table While it is Online (Doc ID 1353967.1)
   - Primary Note: Overview of Online Redefinition of Tables (DBMS_REDEFINITION) (Doc ID 1357825.1)
-  - Online Redefinition using DBMS_REDEFINITION.REDEF_TABLE (Doc ID 2412059.1)
+  - Online Redefinition using **"DBMS_REDEFINITION.REDEF_TABLE"** (Doc ID 2412059.1)
    
    ````
    <copy>

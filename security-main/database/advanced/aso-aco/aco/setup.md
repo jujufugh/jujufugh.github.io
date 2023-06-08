@@ -116,7 +116,7 @@ By completing the instructions below the sample schemas **SH**, **OE**, and **HR
 
 9.  Create gzip backup of the sample data datafile (storage compression simulation)
 
-    **Note**: Your numbers maybe slighlty different then what is shown in the screenshot, but the point is to show that compression has occured. As long is that is still shown for you, you are good to keep going through the lab.
+    **Note**: Your numbers may by slightly different then what is shown in the screenshot, but the point is to show that compression has occured. As long is that is still shown for you, you are good to keep going through the lab.
 
     ````
     <copy>
