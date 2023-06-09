@@ -2,37 +2,37 @@
 
 ## Introduction
 
-Oracle has been a pioneer in database compression technology. Oracle Database 9i introduced Basic Table Compression several years ago that compressed data loaded using bulk load operations. Oracle Database 11g Release 1 introduced a new OLTP Table Compression feature that reduces the associated compression overhead of write operations making it suitable for transactional or OLTP environments as well. OLTP Table Compression, therefore, extends the benefits of compression to all application workloads. OLTP Table Compression was renamed to Advanced Row Compression starting with Oracle Database release 12c.
+The amount of data that enterprises are storing, and managing, is growing rapidly - various industry estimates indicate that data volume is doubling every 2-3 years. This exponential growth of data presents daunting challenges for IT. First, and foremost, are storage costs: even though the cost of storage has been declining dramatically, the enormous growth in the volume of data still makes storage one of the biggest cost elements of most IT budgets. In addition, as databases grow at accelerating rates, it is difficult to continue to meet performance requirements while staying within budget.
 
-Advanced row compression enables table data to be compressed during all types of data manipulation operations, including DML INSERT and UPDATE operations. The intelligent algorithm minimizes compression overhead during write operations, making compression viable for data warehouse and OLTP workloads. The benefits of Advanced row compression go beyond just on-disk storage savings. One significant advantage is Oracle’s ability to read compressed blocks (data and indexes) directly, in memory, without uncompressing the blocks. This helps improve performance due to the reduction in I/O and system calls related to the I/O operations. Further, the buffer cache becomes more efficient by storing more data without adding memory.
+Oracle is a pioneer in database compression technology. Oracle Advanced Compression, and Oracle Database, together provide a robust set of compression, performance and data storage optimization capabilities that enable IT managers to succeed in this complex environment. Oracle Advanced Compression provides a comprehensive set of compression capabilities to help improve performance, while reducing storage costs. It allows IT administrators to significantly reduce their overall database storage footprint by enabling compression for all types of data – relational (table), unstructured (file), and index. 
+
+Although storage cost savings and optimization across servers (production, development, QA, test, backup etc...) are often seen as the most tangible benefits, the features of Advanced Compression are designed to improve performance for all components of your IT infrastructure, including memory, network bandwidth and storage. Whether it is a cloud or an on-premise Oracle Database deployment, Oracle Advanced Compression can deliver robust compression across different environments with no changes in applications. Benefits from Oracle Advanced Compression include smaller database storage footprint, savings in backups and improved database query performance.
 
 Estimated Time: 90 minutes
 
-### About Advanced Row Compression
+## Key Advanced Compression Features
+### Advanced Row Compression
 
-Advanced row compression uses a unique compression algorithm specifically designed to work with OLTP/DW applications. The algorithm eliminates duplicate values within a database block, even across multiple columns. Compressed blocks contain a structure called a symbol table that maintains compression metadata. When a block is compressed, duplicate values are eliminated by first adding a single copy of the duplicate value to the symbol table. Each duplicate value is then replaced by a short reference to the appropriate entry in the symbol table. Compressed data is self-contained within the database block through this innovative design, as the metadata used to translate compressed data into its original state is stored in the block header. When compared with competing compression algorithms that maintain a global database symbol table, Oracle’s approach offers significant performance benefits by not introducing additional I/O (needed with a global symbol table) when accessing compressed data.
+Advanced Row Compression maintains compression during all types of data manipulation operations, including conventional DML such as INSERT and UPDATE.  In addition, Advanced Row Compression minimizes the overhead of write operations on compressed data, making it suitable for transactional/OLTP environments as well as data warehouses, extending the benefits of compression to all application workloads.
 
-### Data growth challenges 
+### Advanced Index Compression
 
-Exponential data growth has put severe pressure from a cost, performance, scalability and management perspective. It has become imperative to employ more efficient ways of storing and managing data to meet the growing demands on IT systems. The rapid growth in data volumes and associated costs are of significant concern for many companies. The companies have started a global initiative to identify and drive a reduction in storage costs. 
+Indexes are typically extensively used inside OLTP databases since they are capable of efficiently supporting a wide variety of access paths to the data stored in relational tables. It is very common to find large numbers of indexes created on a single table to support the multitude of access paths for OLTP applications. This can cause indexes to contribute a greater share to the overall storage of a database when compared to the size of the base tables alone. Creating an index using Advanced Index Compression reduces the size of all supported unique and non-unique indexes -- while still providing efficient access to the indexes. 
 
-### About Index Compression
+### Advanced LOB Compression
 
-Reduces the size of all supported unique and non-unique indexes- Advanced Index Compression HIGH automatically chooses the right compression per index block. Advanced Index Compression provides significant space savings while also improving performance for queries that are executed using indexes.
-
-### SecureFiles LOB compression
-
-SecureFiles LOB Compression utilizes industry-standard compression algorithms to minimize the storage requirements of SecureFiles data. With SecureFiles LOB Compression, typical files such as documents or XML files experience a reduction of 2x to 3x times in size. There are three levels of SecureFiles LOB Compression:  LOW, MEDIUM, and HIGH. By default, SecureFiles LOB Compression uses the MEDIUM level, which typically provides good compression with a modest CPU overhead. In addition to SecureFiles LOB Compression, SecureFiles LOB Deduplication, a feature of Advanced Compression, eliminates duplicate copies of SecureFiles LOBs. SecureFiles LOB Compression was renamed Advanced LOB Compression, and SecureFiles LOB Deduplication was renamed Advanced LOB Deduplication in Oracle Database release 12c. Compression advisor typically provides fairly accurate estimates, of the actual compression results that may be obtained, after implementing compression.
+Advanced LOB Compression provides a mechanism to control the size of SecureFiles LOB segments. Advanced LOB Compression utilizes industry standard compression algorithms to minimize the storage requirements of SecureFiles LOB segments. With Advanced LOB Compression, files such as documents or XML files typically experience a 2x to 3x compression ratio. Advanced LOB Compression automatically avoids compressing data that would not benefit from compression – for instance, a document compressed via a 3rd party tool. 
  
 ### Benefits of advanced row compression 
 
-* Advanced Row Compression users can typically expect compression ratios in the range of 2x to 4x
-* Advanced Index Compression users can typically expect compression ratios in the range of 2x to 5x
-* Advanced LOB Compression users can typically expect compression ratios in the range of 2x to 3x
-* Storage costs to drop as the result of any compression deployments, and 
-* No query performance degradation and only minimal Data Manipulation Language (DML) performance impact from compression.
+*	Advanced Row Compression users can typically expect compression ratios in the range of 2x to 4x
+*	Advanced Index Compression users can typically expect compression ratios in the range of 2x to 5x
+*	Advanced LOB Compression users can typically expect compression ratios in the range of 2x to 3x
+*	Database storage costs to drop as the result of any compression deployments
+*	Improved query performance 
+*	No SQL or application changes
 
-**Note**: The compression ratio achieved, in a given environment, depends on the nature of the data being compressed.
+**Note:** The compression ratio achieved depends on the data being compressed, specifically the cardinality of the data. In general, organizations can expect to reduce their storage space consumption by a factor of 2x to 4x by using Advanced Row Compression. That is, the amount of space consumed by uncompressed data will be two to four times larger than that of the compressed data. 
 
 ### Goals
 
@@ -41,9 +41,8 @@ In completing this lab, you will now see how to best use Advanced Compression al
 ### Objectives
  
 In this lab, you will enable:
-* Use Compression Advisor to estimate the compression ratio and potential space saving
-* Enable Advanced Row Compression and Advanced Index Compression via Online Redefinition
-* SecureFiles LOB Compression
+* Compression Advisor to estimate the compression ratio and potential space saving
+* Advanced Row Compression and Advanced Index Compression via Online Redefinition
 
 ### Prerequisites 
 This lab assumes you have:
@@ -51,8 +50,7 @@ This lab assumes you have:
 * A LiveLabs Cloud account and assigned compartment
 * The IP address and instance name for your DB19c Compute instance
 * Successfully logged into your LiveLabs account
-* Completed Lab: Oracle Transparent Data Encyrption (TDE) 
-
+* Completed Lab: Oracle Transparent Data Encryption (TDE) 
 
 ## Task 1: Compression Advisor to estimate the segment compression ratio
 1. Run a *whoami* to ensure the value *oracle* comes back.
