@@ -152,8 +152,10 @@ The above copyright notice and this permission notice shall be included in all c
 ## **Acknowledgements**
 
 * **Author**
-  * Royce Fu, Principal Database Platform Specialist
+  * Royce Fu, Principal Database and O&M Solution Architect
   * Noah Galloso, Solution Engineer, North America Specialist Hub
 * **Contributors**
   * Richard Evans, Database Security Product Management
-* **Last Updated By/Date** - 
+  * Gregg Christman, Database Advanced Compression Product Management
+* **Last Updated By/Date** 
+  * Royce Fu, June 2023

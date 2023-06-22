@@ -318,6 +318,12 @@ Video:
 - *Back to basics with Transparent Data Encryption (TDE) (March 2021)* [](youtube:JflshZKgxYs)
 
 ## Acknowledgements
-- **Author** - Hakim Loumi, Database Security PM
-- **Contributors** - Rene Fontcha
-- **Last Updated By/Date** - Hakim Loumi, Database Security PM - January 2023
+- **Author** 
+  - Hakim Loumi, Database Security PM
+  - Royce Fu, Principal Database and O&M Solution Architect
+  - Noah Galloso, Solution Engineer, North America Specialist Hub
+- **Contributors** 
+  - Rene Fontcha
+  - Richard Evans, Database Security Product Management
+  - Gregg Christman, Database Advanced Compression Product Management
+- **Last Updated By/Date** - Royce Fu, - June 2023
