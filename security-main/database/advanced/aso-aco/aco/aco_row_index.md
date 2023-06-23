@@ -84,7 +84,7 @@ This lab assumes you have:
     select tablespace_name, encrypted from dba_tablespaces where tablespace_name = 'COMP_DATA_TS';
     </copy>
     ````
-    ![ACO](./images/aco-001.png "ACO")
+    ![SQL Login and Table Creation](./images/aco-001.png "ACO")
    
 3. Run Compression Advisor for Advanced Row Compression
    
@@ -126,7 +126,7 @@ This lab assumes you have:
     /
     </copy>
     ````
-    ![ACO](./images/aco-002.png "ACO")
+    ![Run Compression Advisor for Advanced Row Compression](./images/aco-002.png "ACO")
 
 4. Run Compression Advisor for Partition Tables
    
@@ -169,7 +169,7 @@ This lab assumes you have:
     </copy>
     ````
 
-    ![ACO](./images/aco-003.png "ACO")
+    ![Run Compression Advisor Partition](./images/aco-003.png "ACO")
 
 5. Run Compression Advisor for Advanced Index Compression
    
@@ -213,7 +213,7 @@ This lab assumes you have:
     </copy>
     ````
 
-    ![ACO](./images/aco-004-2.png "ACO")
+    ![Run Compression Advisor Advanced Index Compression](./images/aco-004-2.png "ACO")
 
 ## Task 2: Compression Option 1: Offline compression method
    
@@ -235,7 +235,7 @@ This lab assumes you have:
    </copy>
    ````
 
-   ![ACO](./images/aco-005.png "ACO")
+   ![Offline Compression](./images/aco-005.png "ACO")
 
 ## Task 3: Compression Option 2: Online compression via online redefinition REDEF_TABLE
 
@@ -249,7 +249,7 @@ This lab assumes you have:
     </copy>
     ````
 
-    ![ACO](./images/segment_tablespace_information.png "ACO")
+    ![Sgement tablespace check](./images/segment_tablespace_information.png "ACO")
 
 2. Redefine table online compressed for single table
 
@@ -271,7 +271,7 @@ This lab assumes you have:
     </copy>
     ````  
 
-    ![ACO](./images/aco-006-3.png "ACO")
+    ![Table Online](./images/aco-006-3.png "ACO")
 
     ````
     <copy>
@@ -281,7 +281,7 @@ This lab assumes you have:
     </copy>
     ````
 
-    ![ACO](./images/aco-006-4.png "ACO")
+    ![Display table](./images/aco-006-4.png "ACO")
 
 3. Automate Redefine table online compressed for multiple tables
 
@@ -314,7 +314,7 @@ This lab assumes you have:
     </copy>
     ````  
 
-    ![ACO](./images/aco-007-1.png "ACO")
+    ![Automate Redefine](./images/aco-007-1.png "ACO")
 
     ````
     <copy>
@@ -324,7 +324,7 @@ This lab assumes you have:
     </copy>
     ````
 
-    ![ACO](./images/aco-007-2.png "ACO")
+    ![Display table](./images/aco-007-2.png "ACO")
 
     Compare the previous segment space usage vesus the space usage after the compression
     ````
@@ -337,7 +337,7 @@ This lab assumes you have:
     </copy>
     ````
 
-    ![ACO](./images/aco-011.png "ACO")
+    ![Space comparison](./images/aco-011.png "ACO")
 
 4.  Exit SQL Plus to the oracle user.
 
@@ -356,7 +356,7 @@ This lab assumes you have:
    </copy>
    ````
 
-   ![ACO](./images/aco-008-1.png "ACO")
+   ![Show ACO and TDE together](./images/aco-008-1.png "ACO")
 
    As you can see here, we went from a size of 317MB to 143MB which is a significant decrease in size showing successful enablement of advanced compression for an encrypted tablespace. 
 
@@ -378,7 +378,7 @@ This lab assumes you have:
    </copy>
    ````
 
-   ![ACO](./images/aco-009.png "ACO")
+   ![Session Parallelism](./images/aco-009.png "ACO")
 
 ## Task 5: Restore the database if needed
 
@@ -388,7 +388,7 @@ This lab assumes you have:
     <copy>./tde_restore_init_parameters.sh</copy>
     ````
 
-    ![TDE](./images/tde-025.png "TDE")
+    ![Restore Init Parameters](./images/tde-025.png "TDE")
 
 
 2. Second, restore the database (this may take some time)
@@ -397,7 +397,7 @@ This lab assumes you have:
     <copy>./tde_restore_db.sh</copy>
     ````
 
-    ![TDE](./images/tde-026.png "TDE")
+    ![Restore database](./images/tde-026.png "TDE")
 
 3. Third, delete the associated Oracle Wallet files
 
@@ -405,7 +405,7 @@ This lab assumes you have:
     <copy>./tde_delete_wallet_files.sh</copy>
     ````
 
-    ![TDE](./images/tde-027.png "TDE")
+    ![Delete Wallet](./images/tde-027.png "TDE")
 
 4. Fourth, start the container and pluggable databases
 
@@ -413,7 +413,7 @@ This lab assumes you have:
     <copy>./tde_start_db.sh</copy>
     ````
 
-    ![TDE](./images/tde-028.png "TDE")
+    ![Start CDB and PDB](./images/tde-028.png "TDE")
 
     **Note**: This should have restored your database to it's pre-TDE state!
 
@@ -423,7 +423,7 @@ This lab assumes you have:
     <copy>./tde_check_init_params.sh</copy>
     ````
 
-    ![TDE](./images/tde-029.png "TDE")
+    ![Verify](./images/tde-029.png "TDE")
 
 7. Now, your database is restored to the point in time prior to enabling TDE and you can remove your dabase backup (optional)!
 
@@ -431,7 +431,7 @@ This lab assumes you have:
     <copy>./tde_delete_backup_db.sh</copy>
     ````
 
-    ![TDE](./images/tde-030.png "TDE")
+    ![Remove Backup](./images/tde-030.png "TDE")
 
 
 ## Learn More

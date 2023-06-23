@@ -27,6 +27,7 @@ We wish you an excellent workshop!
 
 You may now [proceed to the next lab](#next).
 
+## Acknowledgements
 * **Author**
   * Royce Fu, Principal Database and O&M Solution Architect
   * Noah Galloso, Solution Engineer, North America Specialist Hub
