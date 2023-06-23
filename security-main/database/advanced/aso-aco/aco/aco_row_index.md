@@ -10,7 +10,7 @@ Although storage cost savings and optimization across servers (production, devel
 
 Estimated Time: 90 minutes
 
-## Key Advanced Compression Features
+### Key Advanced Compression Features
 ### Advanced Row Compression
 
 Advanced Row Compression maintains compression during all types of data manipulation operations, including conventional DML such as INSERT and UPDATE.  In addition, Advanced Row Compression minimizes the overhead of write operations on compressed data, making it suitable for transactional/OLTP environments as well as data warehouses, extending the benefits of compression to all application workloads.
